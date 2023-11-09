@@ -4,6 +4,8 @@ plugins {
     id 'org.javamodularity.moduleplugin' version '1.8.12'
     id 'org.openjfx.javafxplugin' version '0.0.13'
     id 'org.beryx.jlink' version '2.25.0'
+    id 'jacoco'
+    id 'checkstyle'
 }
 
 group 'com.example'
@@ -40,8 +42,36 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }
 
+jacoco {
+    toolVersion = "0.8.7"
+}
+
 test {
     useJUnitPlatform()
+    testLogging{
+        events "passed", "skipped", "failed"
+    }
+
+    finalizedBy 'jacocoTestReport'
+
+}
+
+jacocoTestReport{
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+}
+
+jacocoTestCoverageVerification{
+    violationRules{
+        rule {
+            limit {
+                minimum = 0.8
+            }
+        }
+    }
 }
 
 jlink {
@@ -54,4 +84,13 @@ jlink {
 
 jlinkZip {
     group = 'distribution'
+}
+
+checkstyle{
+    toolVersion = '8.45'
+    configFile = file("config/checkstyle/checkstyle.xml")
+}
+
+checkstyleMain{
+    exclude '**/module-info.java'
 }

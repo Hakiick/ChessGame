@@ -1,6 +1,7 @@
-module com.example.tjav501stg_12 {
+module com.example.tjav501stg_ {
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.desktop;
 
 
     opens com.example.tjav501stg_12 to javafx.fxml;
