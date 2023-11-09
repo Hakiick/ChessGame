@@ -4,6 +4,7 @@ plugins {
     id 'org.javamodularity.moduleplugin' version '1.8.12'
     id 'org.openjfx.javafxplugin' version '0.0.13'
     id 'org.beryx.jlink' version '2.25.0'
+    id 'jacoco'
 }
 
 group 'com.example'
@@ -40,8 +41,36 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }
 
+jacoco {
+    toolVersion = "0.8.7"
+}
+
 test {
     useJUnitPlatform()
+    testLogging{
+        events "passed", "skipped", "failed"
+    }
+
+    finalizedBy 'jacocoTestReport'
+
+}
+
+jacocoTestReport{
+    reports {
+        xml.enabled true
+        html.enabled true
+        csv.enabled false
+    }
+}
+
+jacocoTestCoverageVerification{
+    violationRules{
+        rule {
+            limit {
+                minimum = 0.8
+            }
+        }
+    }
 }
 
 jlink {
