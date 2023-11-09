@@ -92,5 +92,5 @@ checkstyle{
 }
 
 checkstyleMain{
-    exclude '**.module-info.java'
+    exclude '**/module-info.java'
 }
