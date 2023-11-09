@@ -8,17 +8,19 @@ import java.io.IOException;
 import java.net.URL;
 
 public class Piece {
-    public int col, row;
-    public int xPos, yPos;
+    protected int col;
+    protected int row;
+    protected int xPos;
+    protected int yPos;
 
-    public boolean isWhite;
-    public String name;
-    public int value;
+    protected boolean isWhite;
+    protected String name;
+    protected  int value;
 
-    BufferedImage sheet;
+    protected BufferedImage sheet;
     protected int sheetScale;
-    Image sprite;
-    Board board;
+    protected Image sprite;
+    protected Board board;
 
     public Piece(Board board) throws IOException{
         this.board = board;
