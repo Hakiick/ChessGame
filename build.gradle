@@ -87,6 +87,10 @@ jlinkZip {
 }
 
 checkstyle{
-    toolVersion = '8.1'
+    toolVersion = '8.45'
     configFile = file("config/checkstyle/checkstyle.xml")
+}
+
+checkstyleMain{
+    exclude '**.module-info.java'
 }
