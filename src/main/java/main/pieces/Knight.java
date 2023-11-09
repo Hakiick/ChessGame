@@ -1,11 +1,12 @@
-package pieces;
+package main.pieces;
 
 import main.Board;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class Knight extends Piece{
-    public Knight(Board board, int col, int row, boolean isWhite){
+    public Knight(Board board, int col, int row, boolean isWhite) throws IOException {
         super(board);
 
         this.col=col;
