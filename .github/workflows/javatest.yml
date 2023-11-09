@@ -2,85 +2,65 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
-
-permissions:
-  contents: read
-
-env:
-  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+    branches: [ main ]
 
 jobs:
-  test-case-run:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        test-path: [ "shard_one", "shard_two", "shard_three" ]
-    env:
-      ARTIFACT_NAME: ${{ matrix.test-path }}
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 21
-        uses: actions/setup-java@v2
-        with:
-          java-version: 21.0.1
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
-        with:
-          gradle-version: 8.4
-      - name: Run sample test-cases one
-        if: ${{ matrix.test-path == 'shard_one' }}
-        run: ./gradlew cleanTest :matrix:test --tests "com.sample.one.SampleOneTest" --tests "com.sample.two.SampleTwoTest"
-      - name: Run sample test-cases two
-        if: ${{ matrix.test-path == 'shard_two' }}
-        run: ./gradlew cleanTest :matrix:test --tests "com.sample.four.SampleFourTest" --tests "com.sample.five.SampleFiveTest"
-      - name: Run sample test-cases three
-        if: ${{ matrix.test-path == 'shard_three' }}
-        run: ./gradlew cleanTest :matrix:test --tests "com.sample.six.SampleSixTest"
-      - name: Upload coverage for matrix module
-        uses: actions/upload-artifact@v2
-        with:
-          name: test-case reports
-          path: matrix/build/github
+  build:
 
-  code-quality:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
-    needs: [ test-case-run ]
-    if: success() || failure()
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        java: [21]
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v3
         with:
-          fetch-depth: 0
-      - name: Set up JDK 21
-        uses: actions/setup-java@v2
-        with:
-          java-version: 21.0.1
-      - name: download reports
-        uses: actions/download-artifact@v2
-        with:
-          name: test-case reports
-          path: matrix/build/github
-      - name: Display structure of downloaded files
-        run: ls -R
-      - name: Cache SonarQube packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin' # You can choose a different distribution if needed
+
       - name: Cache Gradle packages
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle
-      - name: Build and analyze
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: ./gradlew sonar
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Run unit tests
+        run: ./gradlew test --scan -s
+
+      - name: Collect Test Coverage
+        run: ./gradlew jacocoTestReport
+        if: always() # Even if the build or tests fail
+
+      - name: Code Quality Check
+        run: ./gradlew checkstyleMain checkstyleTest
+
+      - name: Archive test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: build/reports/tests/test/
+
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v3
+        if: always() # Even if the build or tests fail
+        with:
+          name: code-coverage
+          path: build/reports/jacoco/test/html/
