@@ -87,6 +87,6 @@ jlinkZip {
 }
 
 checkstyle{
-    toolVersion = '8.45'
+    toolVersion = '8.1'
     configFile = file("config/checkstyle/checkstyle.xml")
 }
