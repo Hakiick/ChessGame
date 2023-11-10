@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.net.URL;
 
 public class Knight extends Piece  {
-    public Knight(Board board, int col, int row, String color) throws IOException {
+    public Knight(Board board, int col, int row, String color, String theme) throws IOException {
         super(board);
 
         this.col=col;
@@ -18,10 +18,11 @@ public class Knight extends Piece  {
 
 
         this.color = color;
+        this.theme = theme;
         this.name="Knight";
 
         try {
-            URL imageUrl = getClass().getResource("/Knight_" + color + ".png");
+            URL imageUrl = getClass().getResource("/" + theme + "/" + color + "/Knight_" + color + ".png");
             if (imageUrl == null) {
                 throw new IOException("Resource not found: /King_white.png");
             }

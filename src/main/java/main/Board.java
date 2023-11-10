@@ -80,43 +80,82 @@ public class Board extends JPanel {
     }
 
     private void addPieces() throws IOException {
+        // classic
         // Add pieces here. Example: Adding a knight at column 2, row 0
-        pieceList.add(new King(this, 3, 0, "white")); // true for white, false for black
-        pieceList.add(new Queen(this, 4, 0, "white"));
-        pieceList.add(new Rook(this, 0, 0, "white"));
-        pieceList.add(new Bishop(this, 2, 0, "white"));
-        pieceList.add(new Knight(this, 1, 0, "white"));
-        pieceList.add(new Rook(this, 7, 0, "white"));
-        pieceList.add(new Bishop(this, 5, 0, "white"));
-        pieceList.add(new Knight(this, 6, 0, "white"));
+        /*pieceList.add(new King(this, 3, 0, "white", "classic")); // true for white, false for black
+        pieceList.add(new Queen(this, 4, 0, "white", "classic"));
+        pieceList.add(new Rook(this, 0, 0, "white", "classic"));
+        pieceList.add(new Bishop(this, 2, 0, "white", "classic"));
+        pieceList.add(new Knight(this, 1, 0, "white", "classic"));
+        pieceList.add(new Rook(this, 7, 0, "white", "classic"));
+        pieceList.add(new Bishop(this, 5, 0, "white", "classic"));
+        pieceList.add(new Knight(this, 6, 0, "white", "classic"));
 
-        pieceList.add(new Pawn(this, 0, 1, "white"));
-        pieceList.add(new Pawn(this, 1, 1, "white"));
-        pieceList.add(new Pawn(this, 2, 1, "white"));
-        pieceList.add(new Pawn(this, 3, 1, "white"));
-        pieceList.add(new Pawn(this, 4, 1, "white"));
-        pieceList.add(new Pawn(this, 5, 1, "white"));
-        pieceList.add(new Pawn(this, 6, 1, "white"));
-        pieceList.add(new Pawn(this, 7, 1, "white"));
+        pieceList.add(new Pawn(this, 0, 1, "white", "classic"));
+        pieceList.add(new Pawn(this, 1, 1, "white", "classic"));
+        pieceList.add(new Pawn(this, 2, 1, "white", "classic"));
+        pieceList.add(new Pawn(this, 3, 1, "white", "classic"));
+        pieceList.add(new Pawn(this, 4, 1, "white", "classic"));
+        pieceList.add(new Pawn(this, 5, 1, "white", "classic"));
+        pieceList.add(new Pawn(this, 6, 1, "white", "classic"));
+        pieceList.add(new Pawn(this, 7, 1, "white", "classic"));
         // Add other pieces as needed
 
-        pieceList.add(new King(this, 3, 7, "black")); // true for white, false for black
-        pieceList.add(new Queen(this, 4, 7, "black"));
-        pieceList.add(new Rook(this, 0, 7, "black"));
-        pieceList.add(new Bishop(this, 2, 7, "black"));
-        pieceList.add(new Knight(this, 1, 7, "black"));
-        pieceList.add(new Rook(this, 7, 7, "black"));
-        pieceList.add(new Bishop(this, 5, 7, "black"));
-        pieceList.add(new Knight(this, 6, 7, "black"));
+        pieceList.add(new King(this, 3, 7, "black", "classic")); // true for white, false for black
+        pieceList.add(new Queen(this, 4, 7, "black", "classic"));
+        pieceList.add(new Rook(this, 0, 7, "black", "classic"));
+        pieceList.add(new Bishop(this, 2, 7, "black", "classic"));
+        pieceList.add(new Knight(this, 1, 7, "black", "classic"));
+        pieceList.add(new Rook(this, 7, 7, "black", "classic"));
+        pieceList.add(new Bishop(this, 5, 7, "black", "classic"));
+        pieceList.add(new Knight(this, 6, 7, "black", "classic"));
 
-        pieceList.add(new Pawn(this, 0, 6, "black"));
-        pieceList.add(new Pawn(this, 1, 6, "black"));
-        pieceList.add(new Pawn(this, 2, 6, "black"));
-        pieceList.add(new Pawn(this, 3, 6, "black"));
-        pieceList.add(new Pawn(this, 4, 6, "black"));
-        pieceList.add(new Pawn(this, 5, 6, "black"));
-        pieceList.add(new Pawn(this, 6, 6, "black"));
-        pieceList.add(new Pawn(this, 7, 6, "black"));
+        pieceList.add(new Pawn(this, 0, 6, "black", "classic"));
+        pieceList.add(new Pawn(this, 1, 6, "black", "classic"));
+        pieceList.add(new Pawn(this, 2, 6, "black", "classic"));
+        pieceList.add(new Pawn(this, 3, 6, "black", "classic"));
+        pieceList.add(new Pawn(this, 4, 6, "black", "classic"));
+        pieceList.add(new Pawn(this, 5, 6, "black", "classic"));
+        pieceList.add(new Pawn(this, 6, 6, "black", "classic"));
+        pieceList.add(new Pawn(this, 7, 6, "black", "classic"));*/
+
+        // marvel
+        pieceList.add(new King(this, 3, 0, "white", "marvel"));
+        pieceList.add(new Queen(this, 4, 0, "white", "marvel"));
+        pieceList.add(new Rook(this, 0, 0, "white", "marvel"));
+        pieceList.add(new Bishop(this, 2, 0, "white", "marvel"));
+        pieceList.add(new Knight(this, 1, 0, "white", "marvel"));
+        pieceList.add(new Rook(this, 7, 0, "white", "marvel"));
+        pieceList.add(new Bishop(this, 5, 0, "white", "marvel"));
+        pieceList.add(new Knight(this, 6, 0, "white", "marvel"));
+
+        pieceList.add(new Pawn(this, 0, 1, "white", "marvel"));
+        pieceList.add(new Pawn(this, 1, 1, "white", "marvel"));
+        pieceList.add(new Pawn(this, 2, 1, "white", "marvel"));
+        pieceList.add(new Pawn(this, 3, 1, "white", "marvel"));
+        pieceList.add(new Pawn(this, 4, 1, "white", "marvel"));
+        pieceList.add(new Pawn(this, 5, 1, "white", "marvel"));
+        pieceList.add(new Pawn(this, 6, 1, "white", "marvel"));
+        pieceList.add(new Pawn(this, 7, 1, "white", "marvel"));
+        // Add other pieces as needed
+
+        pieceList.add(new King(this, 3, 7, "black", "marvel")); // true for white, false for black
+        pieceList.add(new Queen(this, 4, 7, "black", "marvel"));
+        pieceList.add(new Rook(this, 0, 7, "black", "marvel"));
+        pieceList.add(new Bishop(this, 2, 7, "black", "marvel"));
+        pieceList.add(new Knight(this, 1, 7, "black", "marvel"));
+        pieceList.add(new Rook(this, 7, 7, "black", "marvel"));
+        pieceList.add(new Bishop(this, 5, 7, "black", "marvel"));
+        pieceList.add(new Knight(this, 6, 7, "black", "marvel"));
+
+        pieceList.add(new Pawn(this, 0, 6, "black", "marvel"));
+        pieceList.add(new Pawn(this, 1, 6, "black", "marvel"));
+        pieceList.add(new Pawn(this, 2, 6, "black", "marvel"));
+        pieceList.add(new Pawn(this, 3, 6, "black", "marvel"));
+        pieceList.add(new Pawn(this, 4, 6, "black", "marvel"));
+        pieceList.add(new Pawn(this, 5, 6, "black", "marvel"));
+        pieceList.add(new Pawn(this, 6, 6, "black", "marvel"));
+        pieceList.add(new Pawn(this, 7, 6, "black", "marvel"));
     }
 
     @Override

@@ -21,6 +21,7 @@ public class Piece {
     protected int yPos;
     @Getter
     protected String color;
+    protected String theme;
     protected String name;
     protected  int value;
 
