@@ -7,8 +7,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 
-public class Knight extends Piece  {
-    public Knight(Board board, int col, int row, String color) throws IOException {
+public class Pawn extends Piece  {
+    public Pawn(Board board, int col, int row, String color) throws IOException {
         super(board);
 
         this.col=col;
@@ -16,12 +16,11 @@ public class Knight extends Piece  {
         this.xPos = col * board.getTileSize(); // Use the getter here
         this.yPos = row * board.getTileSize(); // And here
 
-
         this.color = color;
-        this.name="Knight";
+        this.name="Pawn";
 
         try {
-            URL imageUrl = getClass().getResource("/Knight_" + color + ".png");
+            URL imageUrl = getClass().getResource("/Pawn_" + color + ".png");
             if (imageUrl == null) {
                 throw new IOException("Resource not found: /King_white.png");
             }
