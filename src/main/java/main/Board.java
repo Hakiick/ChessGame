@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Board extends JPanel {
-    private final int tileSize = 100; // Tile size for the chessboard
+    private final int tileSize = 85; // Tile size for the chessboard
     private final int borderSize = 1; // Border size around the chessboard
     private final int boardWidth = 8; // Number of columns on the chessboard
     private final int boardHeight = 8; // Number of rows on the chessboard
