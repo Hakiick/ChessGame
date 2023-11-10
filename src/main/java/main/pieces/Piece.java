@@ -1,18 +1,25 @@
 package main.pieces;
 
+import lombok.Setter;
 import main.Board;
-import javax.imageio.ImageIO;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.net.URL;
+import lombok.Getter;
 
 public class Piece {
+    @Getter
+    @Setter
     protected int col;
+    @Getter
+    @Setter
     protected int row;
+    @Setter
     protected int xPos;
+    @Setter
     protected int yPos;
-
+    @Getter
     protected String color;
     protected String name;
     protected  int value;
