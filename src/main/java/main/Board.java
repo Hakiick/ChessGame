@@ -1,6 +1,7 @@
-// Fichier Board.java
+// Board.java
 package main;
 
+import lombok.Getter;
 import main.pieces.Knight;
 import main.pieces.Piece;
 import main.pieces.Queen;
@@ -16,16 +17,66 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Board extends JPanel {
+    @Getter
     private final int tileSize = 85; // Tile size for the chessboard
     private final int borderSize = 1; // Border size around the chessboard
     private final int boardWidth = 8; // Number of columns on the chessboard
     private final int boardHeight = 8; // Number of rows on the chessboard
     private final ArrayList<Piece> pieceList; // List to hold pieces
 
+    public Piece selectedPiece;
+
+    Input input = new Input(this);
+
     public Board() throws IOException {
         setPreferredSize(new Dimension((boardWidth * tileSize) + (2 * borderSize), (boardHeight * tileSize) + (2 * borderSize)));
         pieceList = new ArrayList<>();
+
+        addMouseListener(input);
+        addMouseMotionListener(input);
+
         addPieces(); // Call to add pieces to the board
+    }
+
+    public Piece getPiece(int col, int row){
+
+        for (Piece piece : pieceList){
+            if (piece.getCol() == col && piece.getRow() == row) {
+                return piece;
+            }
+        }
+
+        return null;
+    }
+
+    public void makeMove(Move move){
+        move.piece.setCol(move.newCol);
+        move.piece.setRow(move.newRow);
+        move.piece.setXPos(move.newCol * tileSize);
+        move.piece.setYPos(move.newRow * tileSize);
+
+        capture(move);
+    }
+
+    public void capture(Move move) {
+        pieceList.remove(move.capture);
+    }
+
+    public boolean isValidMove(Move move){
+
+        if (sameTeam(move.piece, move.capture)){
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean sameTeam(Piece p1, Piece p2){
+        if (p1 == null || p2 == null){
+            return false;
+        }
+
+        return p1.getColor().equals(p2.getColor());
     }
 
     private void addPieces() throws IOException {
@@ -66,9 +117,6 @@ public class Board extends JPanel {
         pieceList.add(new Pawn(this, 5, 6, "black"));
         pieceList.add(new Pawn(this, 6, 6, "black"));
         pieceList.add(new Pawn(this, 7, 6, "black"));
-    }
-    public int getTileSize() {
-        return tileSize; // Public getter method for tileSize
     }
 
     @Override
