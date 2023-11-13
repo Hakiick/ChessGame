@@ -26,7 +26,7 @@ public class Board extends JPanel {
 
     public Piece selectedPiece;
 
-    Input input = new Input(this);
+    public Input input = new Input(this);
 
     public Board() throws IOException {
         setPreferredSize(new Dimension((boardWidth * tileSize) + (2 * borderSize), (boardHeight * tileSize) + (2 * borderSize)));
@@ -82,7 +82,7 @@ public class Board extends JPanel {
     private void addPieces() throws IOException {
         // classic
         // Add pieces here. Example: Adding a knight at column 2, row 0
-        /*pieceList.add(new King(this, 3, 0, "white", "classic")); // true for white, false for black
+        pieceList.add(new King(this, 3, 0, "white", "classic")); // true for white, false for black
         pieceList.add(new Queen(this, 4, 0, "white", "classic"));
         pieceList.add(new Rook(this, 0, 0, "white", "classic"));
         pieceList.add(new Bishop(this, 2, 0, "white", "classic"));
@@ -117,10 +117,10 @@ public class Board extends JPanel {
         pieceList.add(new Pawn(this, 4, 6, "black", "classic"));
         pieceList.add(new Pawn(this, 5, 6, "black", "classic"));
         pieceList.add(new Pawn(this, 6, 6, "black", "classic"));
-        pieceList.add(new Pawn(this, 7, 6, "black", "classic"));*/
+        pieceList.add(new Pawn(this, 7, 6, "black", "classic"));
 
         // marvel
-        pieceList.add(new King(this, 3, 0, "white", "marvel"));
+        /*pieceList.add(new King(this, 3, 0, "white", "marvel"));
         pieceList.add(new Queen(this, 4, 0, "white", "marvel"));
         pieceList.add(new Rook(this, 0, 0, "white", "marvel"));
         pieceList.add(new Bishop(this, 2, 0, "white", "marvel"));
@@ -155,7 +155,7 @@ public class Board extends JPanel {
         pieceList.add(new Pawn(this, 4, 6, "black", "marvel"));
         pieceList.add(new Pawn(this, 5, 6, "black", "marvel"));
         pieceList.add(new Pawn(this, 6, 6, "black", "marvel"));
-        pieceList.add(new Pawn(this, 7, 6, "black", "marvel"));
+        pieceList.add(new Pawn(this, 7, 6, "black", "marvel"));*/
     }
 
     @Override
