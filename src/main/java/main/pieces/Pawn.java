@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.net.URL;
 
 public class Pawn extends Piece  {
-    public Pawn(Board board, int col, int row, String color, String theme) throws IOException {
+    public Pawn(Board board, int col, int row, String color, String theme, boolean isWhite) throws IOException {
         super(board);
 
         this.col=col;
@@ -19,6 +19,7 @@ public class Pawn extends Piece  {
         this.color = color;
         this.theme = theme;
         this.name="Pawn";
+        this.isWhite = isWhite;
 
         try {
             URL imageUrl = getClass().getResource("/" + theme + "/" + color + "/Pawn_" + color + ".png");
@@ -33,6 +34,32 @@ public class Pawn extends Piece  {
         }
 
         this.sprite = sheet.getScaledInstance(board.getTileSize(), board.getTileSize(), BufferedImage.SCALE_SMOOTH);
+    }
+
+    public boolean isValidMovement(int col, int row){
+        int colorIndex = isWhite ? 1 : -1;
+
+        //push pawn 1
+        if (this.col == col && this.row + colorIndex == row && board.getPiece(col, row) == null){
+            return true;
+        }
+
+        //push pawn 2
+        if (isFirstMove && this.col == col && this.row + colorIndex * 2 == row && board.getPiece(col, row) == null){
+            return true;
+        }
+
+        // capture left
+        if (col == this.col - 1 && row == this.row + colorIndex && board.getPiece(col, row) != null && !board.getPiece(col, row).getColor().equals(this.color)){
+            return true;
+        }
+
+        // capture right
+        if (col == this.col + 1 && row == this.row + colorIndex && board.getPiece(col, row) != null && !board.getPiece(col, row).getColor().equals(this.color)){
+            return true;
+        }
+
+        return false;
     }
 
 }

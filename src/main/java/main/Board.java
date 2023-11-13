@@ -55,6 +55,8 @@ public class Board extends JPanel {
         move.piece.setXPos(move.newCol * tileSize);
         move.piece.setYPos(move.newRow * tileSize);
 
+        move.piece.isFirstMove = false;
+
         capture(move);
     }
 
@@ -65,6 +67,14 @@ public class Board extends JPanel {
     public boolean isValidMove(Move move){
 
         if (sameTeam(move.piece, move.capture)){
+            return false;
+        }
+
+        if (!move.piece.isValidMovement(move.newCol, move.newRow)){
+            return false;
+        }
+
+        if (move.piece.moveCollidesWithPiece(move.newCol, move.newRow)){
             return false;
         }
 
@@ -82,42 +92,42 @@ public class Board extends JPanel {
     private void addPieces() throws IOException {
         // classic
         // Add pieces here. Example: Adding a knight at column 2, row 0
-        pieceList.add(new King(this, 3, 0, "white", "classic")); // true for white, false for black
-        pieceList.add(new Queen(this, 4, 0, "white", "classic"));
-        pieceList.add(new Rook(this, 0, 0, "white", "classic"));
-        pieceList.add(new Bishop(this, 2, 0, "white", "classic"));
-        pieceList.add(new Knight(this, 1, 0, "white", "classic"));
-        pieceList.add(new Rook(this, 7, 0, "white", "classic"));
-        pieceList.add(new Bishop(this, 5, 0, "white", "classic"));
-        pieceList.add(new Knight(this, 6, 0, "white", "classic"));
+        pieceList.add(new King(this, 3, 0, "white", "classic", true)); // true for white, false for black
+        pieceList.add(new Queen(this, 4, 0, "white", "classic", true));
+        pieceList.add(new Rook(this, 0, 0, "white", "classic", true));
+        pieceList.add(new Bishop(this, 2, 0, "white", "classic", true));
+        pieceList.add(new Knight(this, 1, 0, "white", "classic", true));
+        pieceList.add(new Rook(this, 7, 0, "white", "classic", true));
+        pieceList.add(new Bishop(this, 5, 0, "white", "classic", true));
+        pieceList.add(new Knight(this, 6, 0, "white", "classic", true));
 
-        pieceList.add(new Pawn(this, 0, 1, "white", "classic"));
-        pieceList.add(new Pawn(this, 1, 1, "white", "classic"));
-        pieceList.add(new Pawn(this, 2, 1, "white", "classic"));
-        pieceList.add(new Pawn(this, 3, 1, "white", "classic"));
-        pieceList.add(new Pawn(this, 4, 1, "white", "classic"));
-        pieceList.add(new Pawn(this, 5, 1, "white", "classic"));
-        pieceList.add(new Pawn(this, 6, 1, "white", "classic"));
-        pieceList.add(new Pawn(this, 7, 1, "white", "classic"));
+        pieceList.add(new Pawn(this, 0, 1, "white", "classic", true));
+        pieceList.add(new Pawn(this, 1, 1, "white", "classic", true));
+        pieceList.add(new Pawn(this, 2, 1, "white", "classic", true));
+        pieceList.add(new Pawn(this, 3, 1, "white", "classic", true));
+        pieceList.add(new Pawn(this, 4, 1, "white", "classic", true));
+        pieceList.add(new Pawn(this, 5, 1, "white", "classic", true));
+        pieceList.add(new Pawn(this, 6, 1, "white", "classic", true));
+        pieceList.add(new Pawn(this, 7, 1, "white", "classic", true));
         // Add other pieces as needed
 
-        pieceList.add(new King(this, 3, 7, "black", "classic")); // true for white, false for black
-        pieceList.add(new Queen(this, 4, 7, "black", "classic"));
-        pieceList.add(new Rook(this, 0, 7, "black", "classic"));
-        pieceList.add(new Bishop(this, 2, 7, "black", "classic"));
-        pieceList.add(new Knight(this, 1, 7, "black", "classic"));
-        pieceList.add(new Rook(this, 7, 7, "black", "classic"));
-        pieceList.add(new Bishop(this, 5, 7, "black", "classic"));
-        pieceList.add(new Knight(this, 6, 7, "black", "classic"));
+        pieceList.add(new King(this, 3, 7, "black", "classic", false));
+        pieceList.add(new Queen(this, 4, 7, "black", "classic", false));
+        pieceList.add(new Rook(this, 0, 7, "black", "classic", false));
+        pieceList.add(new Bishop(this, 2, 7, "black", "classic", false));
+        pieceList.add(new Knight(this, 1, 7, "black", "classic", false));
+        pieceList.add(new Rook(this, 7, 7, "black", "classic", false));
+        pieceList.add(new Bishop(this, 5, 7, "black", "classic", false));
+        pieceList.add(new Knight(this, 6, 7, "black", "classic", false));
 
-        pieceList.add(new Pawn(this, 0, 6, "black", "classic"));
-        pieceList.add(new Pawn(this, 1, 6, "black", "classic"));
-        pieceList.add(new Pawn(this, 2, 6, "black", "classic"));
-        pieceList.add(new Pawn(this, 3, 6, "black", "classic"));
-        pieceList.add(new Pawn(this, 4, 6, "black", "classic"));
-        pieceList.add(new Pawn(this, 5, 6, "black", "classic"));
-        pieceList.add(new Pawn(this, 6, 6, "black", "classic"));
-        pieceList.add(new Pawn(this, 7, 6, "black", "classic"));
+        pieceList.add(new Pawn(this, 0, 6, "black", "classic", false));
+        pieceList.add(new Pawn(this, 1, 6, "black", "classic", false));
+        pieceList.add(new Pawn(this, 2, 6, "black", "classic", false));
+        pieceList.add(new Pawn(this, 3, 6, "black", "classic", false));
+        pieceList.add(new Pawn(this, 4, 6, "black", "classic", false));
+        pieceList.add(new Pawn(this, 5, 6, "black", "classic", false));
+        pieceList.add(new Pawn(this, 6, 6, "black", "classic", false));
+        pieceList.add(new Pawn(this, 7, 6, "black", "classic", false));
 
         // marvel
         /*pieceList.add(new King(this, 3, 0, "white", "marvel"));
@@ -160,23 +170,29 @@ public class Board extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
-        // Draw the border
-        g2d.setColor(Color.gray);
-        g2d.fillRect(0, 0, getWidth(), getHeight());
-
-        // Draw the chessboard tiles within the border
+        //paint board
         for (int row = 0; row < boardHeight; row++) {
             for (int col = 0; col < boardWidth; col++) {
-                // Alternate tile color
-                g2d.setColor((col + row) % 2 == 0 ? Color.white : Color.gray);
+                g2d.setColor((col + row) % 2 == 0 ? new Color(227, 198, 181) : new Color(157, 105, 53));
                 g2d.fillRect(col * tileSize + borderSize, row * tileSize + borderSize, tileSize, tileSize);
             }
         }
 
-        // Draw the pieces on the board
+        //paint highlights
+        if (selectedPiece != null) {
+            for (int row = 0; row < boardHeight; row++) {
+                for (int col = 0; col < boardWidth; col++) {
+                    if(isValidMove(new Move(this, selectedPiece, col, row))) {
+                        g2d.setColor((col + row) % 2 == 0 ? Color.white : Color.gray);
+                        g2d.fillRect(col * tileSize + borderSize, row * tileSize + borderSize, tileSize, tileSize);
+                    }
+                }
+            }
+        }
+
+        // paint pieces
         for (Piece piece : pieceList) {
             piece.paint(g2d);
         }
