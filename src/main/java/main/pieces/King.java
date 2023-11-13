@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.net.URL;
 
 public class King extends Piece  {
-    public King(Board board, int col, int row, String color) throws IOException {
+    public King(Board board, int col, int row, String color, String theme) throws IOException {
         super(board);
 
         this.col = col;
@@ -16,10 +16,12 @@ public class King extends Piece  {
         this.xPos = col * board.getTileSize(); // Use the getter here
         this.yPos = row * board.getTileSize(); // And here
 
+        this.color = color;
         this.name = "King";
+        this.theme = theme;
 
             try {
-                URL imageUrl = getClass().getResource("/King_" + color + ".png");
+                URL imageUrl = getClass().getResource("/" + theme + "/" + color + "/King_" + color + ".png");
                 if (imageUrl == null) {
                     throw new IOException("Resource not found: /King_white.png");
                 }

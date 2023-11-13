@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.net.URL;
 
 public class Pawn extends Piece  {
-    public Pawn(Board board, int col, int row, String color) throws IOException {
+    public Pawn(Board board, int col, int row, String color, String theme) throws IOException {
         super(board);
 
         this.col=col;
@@ -17,10 +17,11 @@ public class Pawn extends Piece  {
         this.yPos = row * board.getTileSize(); // And here
 
         this.color = color;
+        this.theme = theme;
         this.name="Pawn";
 
         try {
-            URL imageUrl = getClass().getResource("/Pawn_" + color + ".png");
+            URL imageUrl = getClass().getResource("/" + theme + "/" + color + "/Pawn_" + color + ".png");
             if (imageUrl == null) {
                 throw new IOException("Resource not found: /King_white.png");
             }
