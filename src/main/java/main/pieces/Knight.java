@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.net.URL;
 
 public class Knight extends Piece  {
-    public Knight(Board board, int col, int row, String color, String theme) throws IOException {
+    public Knight(Board board, int col, int row, String color, String theme, boolean isWhite) throws IOException {
         super(board);
 
         this.col=col;
@@ -20,6 +20,7 @@ public class Knight extends Piece  {
         this.color = color;
         this.theme = theme;
         this.name="Knight";
+        this.isWhite = isWhite;
 
         try {
             URL imageUrl = getClass().getResource("/" + theme + "/" + color + "/Knight_" + color + ".png");
@@ -34,6 +35,10 @@ public class Knight extends Piece  {
         }
 
         this.sprite = sheet.getScaledInstance(board.getTileSize(), board.getTileSize(), BufferedImage.SCALE_SMOOTH);
+    }
+
+    public boolean isValidMovement(int col, int row){
+        return Math.abs(col - this.col) * Math.abs(row - this.row) == 2;
     }
 
 }

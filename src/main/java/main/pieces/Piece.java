@@ -21,9 +21,13 @@ public class Piece {
     protected int yPos;
     @Getter
     protected String color;
+    @Getter
+    protected boolean isWhite;
     protected String theme;
     protected String name;
     protected  int value;
+
+    public boolean isFirstMove = true;
 
     protected BufferedImage sheet;
     protected int sheetScale;
@@ -44,6 +48,9 @@ public class Piece {
             // Handle the case where the image couldn't be loaded more gracefully
 //        }
     }
+
+    public boolean isValidMovement(int col, int row){return true;}
+    public boolean moveCollidesWithPiece(int col, int row){return false;}
 
     public void paint(Graphics2D g2d) {
         if (sprite != null) {
