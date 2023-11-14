@@ -23,19 +23,26 @@ public class Board extends JPanel {
     private final int boardWidth = 8; // Number of columns on the chessboard
     private final int boardHeight = 8; // Number of rows on the chessboard
     private final ArrayList<Piece> pieceList; // List to hold pieces
-
+    private boolean isWhiteTurn = true; // true for white's turn, false for black's
+    private boolean isFirstMove = true;
     public Piece selectedPiece;
-
     public Input input = new Input(this);
 
-    public Board() throws IOException {
+    public Board(JLabel whiteTimeLabel, JLabel blackTimeLabel) throws IOException {
         setPreferredSize(new Dimension((boardWidth * tileSize) + (2 * borderSize), (boardHeight * tileSize) + (2 * borderSize)));
         pieceList = new ArrayList<>();
+        isWhiteTurn = true;
+        setLayout(new BorderLayout()); // Set layout to BorderLayout
+        add(whiteTimeLabel, BorderLayout.NORTH); // Add white timer label at the top
+        add(blackTimeLabel, BorderLayout.SOUTH);
 
         addMouseListener(input);
         addMouseMotionListener(input);
 
-        addPieces(); // Call to add pieces to the board
+        addPieces(); // Initialize and add pieces to the board
+
+        // Start the timer for the first player (assuming white starts)
+
     }
 
     public Piece getPiece(int col, int row){
@@ -49,19 +56,40 @@ public class Board extends JPanel {
         return null;
     }
 
-    public void makeMove(Move move){
+    public void makeMove(Move move) {
+        if (!isValidMove(move)) {
+            return; // If the move is not valid, do not proceed
+        }
+
         move.piece.setCol(move.newCol);
         move.piece.setRow(move.newRow);
         move.piece.setXPos(move.newCol * tileSize);
         move.piece.setYPos(move.newRow * tileSize);
 
-        move.piece.isFirstMove = false;
-
         capture(move);
+
+
+        // Start the timer for the first move by the white player
+        if (isFirstMove && move.piece.getColor().equals("white")) {
+            Main.whiteTimer.start(); // Start the white timer
+            isFirstMove = false; // Update the flag after the first move
+        }
+
+        // Switch turns and update timers
+        isWhiteTurn = !isWhiteTurn;
+        if (isWhiteTurn) {
+            Main.blackTimer.stop();
+            Main.whiteTimer.start();
+        } else {
+            Main.whiteTimer.stop();
+            Main.blackTimer.start();
+        }
     }
 
     public void capture(Move move) {
-        pieceList.remove(move.capture);
+        if (move.capture != null) {
+            pieceList.remove(move.capture);
+        }
     }
 
     public boolean isValidMove(Move move){
