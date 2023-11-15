@@ -9,10 +9,10 @@ import java.io.IOException;
 public class Main {
     static Timer whiteTimer;
     static Timer blackTimer;
-    private static JLabel whiteTimeLabel;
-    private static JLabel blackTimeLabel;
-    private static int whiteTimeRemaining = 600; // 10 minutes
-    private static int blackTimeRemaining = 600; // 10 minutes
+    static JLabel whiteTimeLabel;
+    static JLabel blackTimeLabel;
+    static int whiteTimeRemaining = 600; // 10 minutes
+    static int blackTimeRemaining = 600; // 10 minutes
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             initializeTimers();
@@ -50,14 +50,16 @@ public class Main {
                     whiteTimeRemaining--;
                     if (whiteTimeRemaining <= 0) {
                         whiteTimer.stop();
-                        // Handle white timer timeout
+                        blackTimer.stop();
+                        JOptionPane.showMessageDialog(null, "Time's up! Black wins!");
                     }
                     whiteTimeLabel.setText(formatTime(whiteTimeRemaining));
                 } else if (e.getSource() == blackTimer) {
                     blackTimeRemaining--;
                     if (blackTimeRemaining <= 0) {
                         blackTimer.stop();
-                        // Handle black timer timeout
+                        whiteTimer.stop();
+                        JOptionPane.showMessageDialog(null, "Time's up! White wins!");
                     }
                     blackTimeLabel.setText(formatTime(blackTimeRemaining));
                 }
@@ -74,7 +76,7 @@ public class Main {
         blackTimer.stop();
     }
 
-    private static String formatTime(int timeInSeconds) {
+    static String formatTime(int timeInSeconds) {
         int minutes = timeInSeconds / 60;
         int seconds = timeInSeconds % 60;
         return String.format("%02d:%02d", minutes, seconds);

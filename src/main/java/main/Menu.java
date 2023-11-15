@@ -25,6 +25,31 @@ public class Menu extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.fill = GridBagConstraints.VERTICAL;
+        gbc.insets = new Insets(5, 0, 5, 0); // Added spacing between buttons
+
+        // Timer selection buttons
+        JButton btn10Minutes = createStyledButton("10 Minutes");
+        btn10Minutes.addActionListener(e -> {
+            playSound("/mixkit-game-click-1114.wav"); // Sound effect
+            setTimerAndStart(board, 600, cardLayout, mainPanel);
+        });
+        add(btn10Minutes, gbc);
+
+        JButton btn30Minutes = createStyledButton("30 Minutes");
+        btn30Minutes.addActionListener(e -> {
+            playSound("/mixkit-game-click-1114.wav"); // Sound effect
+            setTimerAndStart(board, 1800, cardLayout, mainPanel);
+        });
+        add(btn30Minutes, gbc);
+
+        JButton btn5Minutes = createStyledButton("5 Minutes");
+        btn5Minutes.addActionListener(e -> {
+            playSound("/mixkit-game-click-1114.wav"); // Sound effect
+            setTimerAndStart(board, 300, cardLayout, mainPanel);
+        });
+        add(btn5Minutes, gbc);
+
+        // Start game button with sound effect
 
         JButton startButton = createStyledButton("Start Game");
         startButton.addActionListener(e -> {
@@ -41,6 +66,10 @@ public class Menu extends JPanel {
         add(exitButton, gbc);
 
         setOpaque(false);
+    }
+    private void setTimerAndStart(Board board, int timeInSeconds, CardLayout cardLayout, JPanel mainPanel) {
+        board.setTimer(timeInSeconds);
+        cardLayout.show(mainPanel, "Board");
     }
 
     private JButton createStyledButton(String text) {
