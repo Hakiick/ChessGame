@@ -68,11 +68,11 @@ public class Board extends JPanel {
 
         capture(move);
 
+        move.piece.isFirstMove = false; // Update the flag after the first move
 
         // Start the timer for the first move by the white player
         if (isFirstMove && move.piece.getColor().equals("white")) {
             Main.whiteTimer.start(); // Start the white timer
-            isFirstMove = false; // Update the flag after the first move
         }
 
         // Switch turns and update timers
@@ -87,9 +87,7 @@ public class Board extends JPanel {
     }
 
     public void capture(Move move) {
-        if (move.capture != null) {
-            pieceList.remove(move.capture);
-        }
+        pieceList.remove(move.capture);
     }
 
     public boolean isValidMove(Move move){
