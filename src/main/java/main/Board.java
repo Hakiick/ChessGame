@@ -24,11 +24,14 @@ public class Board extends JPanel {
     private final int boardHeight = 8; // Number of rows on the chessboard
     private final ArrayList<Piece> pieceList; // List to hold pieces
     private boolean isWhiteTurn = true; // true for white's turn, false for black's
-    private boolean isFirstMove = true;
+
+    public int enPassantTile = -1;
+    boolean isFirstMove = true;
     public Piece selectedPiece;
     public Input input = new Input(this);
 
     public Board(JLabel whiteTimeLabel, JLabel blackTimeLabel) throws IOException {
+
         setPreferredSize(new Dimension((boardWidth * tileSize) + (2 * borderSize), (boardHeight * tileSize) + (2 * borderSize)));
         pieceList = new ArrayList<>();
         isWhiteTurn = true;
@@ -63,9 +66,43 @@ public class Board extends JPanel {
         return null;
     }
 
-    public void makeMove(Move move) {
+    public void makeMove(Move move) throws IOException {
         if (!isValidMove(move)) {
             return; // If the move is not valid, do not proceed
+        }else {
+            if (move.piece.getName().equals("Pawn")) {
+                movePawn(move);
+            } else {
+                move.piece.setCol(move.newCol);
+                move.piece.setRow(move.newRow);
+                move.piece.setXPos(move.newCol * tileSize);
+                move.piece.setYPos(move.newRow * tileSize);
+
+                capture(move.capture);
+            }
+        }
+    }
+
+    private void movePawn(Move move) throws IOException {
+
+        //en passant
+        int colorIndex = move.piece.isWhite() ? -1 : +1;
+        int colorIndex2 = move.piece.isWhite() ? 1 : -1;
+
+        if (getTileNum(move.newCol + colorIndex, move.newRow  + colorIndex) + colorIndex2 == enPassantTile){
+
+            move.capture = getPiece(move.newCol, move.newRow + colorIndex);
+        }
+        if (Math.abs(move.piece.getRow() - move.newRow) == 2){
+            enPassantTile = getTileNum(move.newCol, move.newRow);
+        }else{
+            enPassantTile = -1;
+        }
+
+        // promotions
+        colorIndex = move.piece.isWhite() ? 7 : 0;
+        if (move.newRow == colorIndex){
+            promotePawn(move);
         }
 
         move.piece.setCol(move.newCol);
@@ -73,9 +110,9 @@ public class Board extends JPanel {
         move.piece.setXPos(move.newCol * tileSize);
         move.piece.setYPos(move.newRow * tileSize);
 
-        capture(move);
-
         move.piece.isFirstMove = false; // Update the flag after the first move
+
+        capture(move.capture);
 
         // Start the timer for the first move by the white player
         if (isFirstMove && move.piece.getColor().equals("white")) {
@@ -93,8 +130,17 @@ public class Board extends JPanel {
         }
     }
 
-    public void capture(Move move) {
-        pieceList.remove(move.capture);
+    public int getTileNum(int col, int row){
+        return row * boardWidth + col;
+    }
+
+    private void promotePawn(Move move) throws IOException {
+        pieceList.add(new Queen(this, move.newCol, move.newRow, move.piece.getColor(), move.piece.getTheme(),move.piece.isWhite()));
+        capture(move.piece);
+    }
+
+    public void capture(Piece piece) {
+        pieceList.remove(piece);
     }
 
     public boolean isValidMove(Move move){
@@ -169,7 +215,7 @@ public class Board extends JPanel {
         pieceList.add(new Pawn(this, 7, 6, "black", "classic", false));
 
         // marvel
-        /*pieceList.add(new King(this, 3, 0, "white", "marvel"));
+        /* pieceList.add(new King(this, 3, 0, "white", "marvel"));
         pieceList.add(new Queen(this, 4, 0, "white", "marvel"));
         pieceList.add(new Rook(this, 0, 0, "white", "marvel"));
         pieceList.add(new Bishop(this, 2, 0, "white", "marvel"));
