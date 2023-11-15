@@ -59,7 +59,30 @@ public class Pawn extends Piece  {
             return true;
         }
 
+        // En Passant Left
+        if (
+            board.getTileNum(this.col - 1, this.row) == board.enPassantTile &&
+            board.getPiece(col, row - colorIndex) != null &&
+            !board.getPiece(this.col - 1, this.row).getColor().equals(this.color) &&
+            board.getPiece(this.col - 1, this.row) instanceof Pawn &&
+            board.getPiece(col + 1, row - colorIndex) == this
+        ) {
+            // En passant capture is possible on the left
+            return true;
+        }
+
+        // En Passant Right
+        if (
+            board.getTileNum(this.col + 1, this.row) == board.enPassantTile &&
+            board.getPiece(col, row - colorIndex) != null &&
+            board.getPiece(this.col + 1, this.row) instanceof Pawn &&
+            !board.getPiece(this.col + 1, this.row).getColor().equals(this.color) &&
+            board.getPiece(col - 1, row - colorIndex) == this
+        ) {
+            // En passant capture is possible on the right
+            return true;
+        }
+
         return false;
     }
-
 }

@@ -23,7 +23,9 @@ public class Piece {
     protected String color;
     @Getter
     protected boolean isWhite;
+    @Getter
     protected String theme;
+    @Getter
     protected String name;
     protected  int value;
 

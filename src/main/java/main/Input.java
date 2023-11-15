@@ -6,6 +6,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.IOException;
 
 public class Input extends MouseAdapter {
 
@@ -43,7 +44,11 @@ public class Input extends MouseAdapter {
             Move move = new Move(board, board.selectedPiece, col, row);
 
             if (board.isValidMove(move)){
-                board.makeMove(move);
+                try {
+                    board.makeMove(move);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             }else{
                 board.selectedPiece.setXPos(board.selectedPiece.getCol() * board.getTileSize());
                 board.selectedPiece.setYPos(board.selectedPiece.getRow() * board.getTileSize());
