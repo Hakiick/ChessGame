@@ -44,6 +44,13 @@ public class Board extends JPanel {
         // Start the timer for the first player (assuming white starts)
 
     }
+    public void setTimer(int timeInSeconds) {
+        Main.whiteTimeRemaining = timeInSeconds;
+        Main.blackTimeRemaining = timeInSeconds;
+        // Update timer labels if necessary
+        Main.whiteTimeLabel.setText(Main.formatTime(timeInSeconds));
+        Main.blackTimeLabel.setText(Main.formatTime(timeInSeconds));
+    }
 
     public Piece getPiece(int col, int row){
 
@@ -113,6 +120,12 @@ public class Board extends JPanel {
         }
 
         return p1.getColor().equals(p2.getColor());
+    }
+    public void gameOver() {
+        // Example implementation, adjust as needed
+        Main.whiteTimer.stop();
+        Main.blackTimer.stop();
+        // Disable further moves, etc.
     }
 
     private void addPieces() throws IOException {
