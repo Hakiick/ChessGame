@@ -1,58 +1,65 @@
-// Board.java
 package main;
 
 import lombok.Getter;
-import main.pieces.Knight;
-import main.pieces.Piece;
-import main.pieces.Queen;
-import main.pieces.King;
-import main.pieces.Rook;
-import main.pieces.Bishop;
-import main.pieces.Pawn;
-
-
+import main.pieces.*;
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.io.IOException;
+
 
 public class Board extends JPanel {
     @Getter
-    private final int tileSize = 85; // Tile size for the chessboard
-    private final int borderSize = 1; // Border size around the chessboard
-    private final int boardWidth = 8; // Number of columns on the chessboard
-    private final int boardHeight = 8; // Number of rows on the chessboard
-    private final ArrayList<Piece> pieceList; // List to hold pieces
-    private boolean isWhiteTurn = true; // true for white's turn, false for black's
-
+    private final int tileSize = 85;
+    private final int borderSize = 1;
+    private final int boardWidth = 8;
+    private final int boardHeight = 8;
+    private final ArrayList<Piece> pieceList;
+    private boolean isWhiteTurn = true;
+    private String whitePlayerName;
+    private String blackPlayerName;
     public int enPassantTile = -1;
     boolean isFirstMove = true;
     public Piece selectedPiece;
-    public Input input = new Input(this);
+    public Input input;
 
-    public Board(JLabel whiteTimeLabel, JLabel blackTimeLabel) throws IOException {
-
+    public Board(JLabel whiteTimeLabel, JLabel blackTimeLabel) {
         setPreferredSize(new Dimension((boardWidth * tileSize) + (2 * borderSize), (boardHeight * tileSize) + (2 * borderSize)));
         pieceList = new ArrayList<>();
-        isWhiteTurn = true;
-        setLayout(new BorderLayout()); // Set layout to BorderLayout
-        add(whiteTimeLabel, BorderLayout.NORTH); // Add white timer label at the top
+        input = new Input(this);
+        setLayout(new BorderLayout());
+        add(whiteTimeLabel, BorderLayout.NORTH);
         add(blackTimeLabel, BorderLayout.SOUTH);
-
         addMouseListener(input);
         addMouseMotionListener(input);
-
-        addPieces(); // Initialize and add pieces to the board
-
-        // Start the timer for the first player (assuming white starts)
-
+        try {
+            addPieces(); // Initialize and add pieces to the board
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle exception
+        }
+    }
+    public void setPlayerNames(String whiteName, String blackName) {
+        this.whitePlayerName = whiteName;
+        this.blackPlayerName = blackName;
+    }
+    public void gameOver(String winningColor) {
+        String winner = winningColor.equals("white") ? whitePlayerName : blackPlayerName;
+        JOptionPane.showMessageDialog(null, winner + " wins!");
+        Main.whiteTimer.stop();
+        Main.blackTimer.stop();
+        // Additional cleanup can be done here if necessary.
     }
     public void setTimer(int timeInSeconds) {
         Main.whiteTimeRemaining = timeInSeconds;
         Main.blackTimeRemaining = timeInSeconds;
-        // Update timer labels if necessary
         Main.whiteTimeLabel.setText(Main.formatTime(timeInSeconds));
         Main.blackTimeLabel.setText(Main.formatTime(timeInSeconds));
+        if (isWhiteTurn) {
+            Main.whiteTimer.start();
+        } else {
+            Main.blackTimer.start();
+        }
     }
 
     public Piece getPiece(int col, int row){
@@ -167,15 +174,10 @@ public class Board extends JPanel {
 
         return p1.getColor().equals(p2.getColor());
     }
-    public void gameOver() {
-        // Example implementation, adjust as needed
-        Main.whiteTimer.stop();
-        Main.blackTimer.stop();
-        // Disable further moves, etc.
-    }
 
-    private void addPieces() throws IOException {
-        // classic
+    // This could be in a method checking for game over conditions
+
+    private void addPieces() throws IOException {        // classic
         // Add pieces here. Example: Adding a knight at column 2, row 0
         pieceList.add(new King(this, 3, 0, "white", "classic", true)); // true for white, false for black
         pieceList.add(new Queen(this, 4, 0, "white", "classic", true));
@@ -251,6 +253,7 @@ public class Board extends JPanel {
         pieceList.add(new Pawn(this, 5, 6, "black", "marvel"));
         pieceList.add(new Pawn(this, 6, 6, "black", "marvel"));
         pieceList.add(new Pawn(this, 7, 6, "black", "marvel"));*/
+        repaint();
     }
 
     @Override

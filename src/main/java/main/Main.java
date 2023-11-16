@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
+
 
 public class Main {
     static Timer whiteTimer;
@@ -13,23 +13,19 @@ public class Main {
     static JLabel blackTimeLabel;
     static int whiteTimeRemaining = 600; // 10 minutes
     static int blackTimeRemaining = 600; // 10 minutes
+    static Board board; // Reference to the Board class
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            initializeTimers();
             JFrame frame = new JFrame("CHESS FIGHTER");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
             CardLayout cardLayout = new CardLayout();
             JPanel mainPanel = new JPanel(cardLayout);
 
-            Board board = null;
-            try {
-                board = new Board(whiteTimeLabel, blackTimeLabel); // Pass timer labels to Board
-            } catch (Exception e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(frame, "Failed to load the board: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                System.exit(1);
-            }
+            // Initialize the timer labels with default text
+            whiteTimeLabel = new JLabel("White Timer: 00:00");
+            blackTimeLabel = new JLabel("Black Timer: 00:00");
+            board = new Board(whiteTimeLabel, blackTimeLabel);
 
             Menu menu = null;
             menu = new Menu(frame, board, cardLayout, mainPanel);
@@ -41,6 +37,8 @@ public class Main {
             frame.setResizable(false);
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
+
+            initializeTimers(); // Initialize timers
         });
     }
     private static void initializeTimers() {
@@ -48,32 +46,31 @@ public class Main {
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == whiteTimer) {
                     whiteTimeRemaining--;
+                    whiteTimeLabel.setText(formatTime(whiteTimeRemaining));
                     if (whiteTimeRemaining <= 0) {
                         whiteTimer.stop();
                         blackTimer.stop();
-                        JOptionPane.showMessageDialog(null, "Time's up! Black wins!");
+                        board.gameOver("black"); // Black wins if white timer runs out
                     }
-                    whiteTimeLabel.setText(formatTime(whiteTimeRemaining));
                 } else if (e.getSource() == blackTimer) {
                     blackTimeRemaining--;
+                    blackTimeLabel.setText(formatTime(blackTimeRemaining));
                     if (blackTimeRemaining <= 0) {
                         blackTimer.stop();
                         whiteTimer.stop();
-                        JOptionPane.showMessageDialog(null, "Time's up! White wins!");
+                        board.gameOver("white"); // White wins if black timer runs out
                     }
-                    blackTimeLabel.setText(formatTime(blackTimeRemaining));
                 }
             }
         };
 
         whiteTimer = new Timer(1000, timerListener);
         blackTimer = new Timer(1000, timerListener);
-        whiteTimeLabel = new JLabel(formatTime(whiteTimeRemaining));
-        blackTimeLabel = new JLabel(formatTime(blackTimeRemaining));
+    }
 
-        // Stop the timers initially
-        whiteTimer.stop();
-        blackTimer.stop();
+    static void startTimers(int timeInSeconds) {
+        whiteTimeRemaining = timeInSeconds;
+        blackTimeRemaining = timeInSeconds;
     }
 
     static String formatTime(int timeInSeconds) {
