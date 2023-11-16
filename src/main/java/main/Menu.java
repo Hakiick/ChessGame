@@ -9,52 +9,38 @@ import javax.imageio.ImageIO;
 
 public class Menu extends JPanel {
     private BufferedImage backgroundImage;
+    private JComboBox<String> timerDropdown;
+    private JTextField whitePlayerNameField;
+    private JTextField blackPlayerNameField;
 
     public Menu(JFrame frame, Board board, CardLayout cardLayout, JPanel mainPanel) {
-        // Load the background image
         try {
             backgroundImage = ImageIO.read(getClass().getResourceAsStream("/jon-tyson-SlntP-SLi0Q-unsplash.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(frame, "Unable to load background image.", "Error", JOptionPane.ERROR_MESSAGE);
-            // Handle how you want your program to react if the background cannot be loaded
-            backgroundImage = null;
         }
 
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.fill = GridBagConstraints.VERTICAL;
-        gbc.insets = new Insets(5, 0, 5, 0); // Added spacing between buttons
+        gbc.insets = new Insets(5, 0, 5, 0);
 
-        // Timer selection buttons
-        JButton btn10Minutes = createStyledButton("10 Minutes");
-        btn10Minutes.addActionListener(e -> {
-            playSound("/mixkit-game-click-1114.wav"); // Sound effect
-            setTimerAndStart(board, 600, cardLayout, mainPanel);
-        });
-        add(btn10Minutes, gbc);
+        whitePlayerNameField = new JTextField("White Player Name", 15);
+        add(whitePlayerNameField, gbc);
+        blackPlayerNameField = new JTextField("Black Player Name", 15);
+        add(blackPlayerNameField, gbc);
 
-        JButton btn30Minutes = createStyledButton("30 Minutes");
-        btn30Minutes.addActionListener(e -> {
-            playSound("/mixkit-game-click-1114.wav"); // Sound effect
-            setTimerAndStart(board, 1800, cardLayout, mainPanel);
-        });
-        add(btn30Minutes, gbc);
-
-        JButton btn5Minutes = createStyledButton("5 Minutes");
-        btn5Minutes.addActionListener(e -> {
-            playSound("/mixkit-game-click-1114.wav"); // Sound effect
-            setTimerAndStart(board, 300, cardLayout, mainPanel);
-        });
-        add(btn5Minutes, gbc);
-
-        // Start game button with sound effect
+        String[] timerOptions = {"5 Minutes", "10 Minutes", "30 Minutes"};
+        timerDropdown = new JComboBox<>(timerOptions);
+        timerDropdown.setSelectedIndex(1); // Default to 10 Minutes
+        add(timerDropdown, gbc);
 
         JButton startButton = createStyledButton("Start Game");
         startButton.addActionListener(e -> {
             playSound("/mixkit-game-click-1114.wav");
-            cardLayout.show(mainPanel, "Board");
+            setTimerAndStart(board, getSelectedTimeInSeconds(), cardLayout, mainPanel);
         });
         add(startButton, gbc);
 
@@ -67,20 +53,34 @@ public class Menu extends JPanel {
 
         setOpaque(false);
     }
+
+    private int getSelectedTimeInSeconds() {
+        String selectedTimer = (String) timerDropdown.getSelectedItem();
+        return switch (selectedTimer) {
+            case "5 Minutes" -> 300;
+            case "30 Minutes" -> 1800;
+            default -> 600; // Default to 10 Minutes
+        };
+    }
+
     private void setTimerAndStart(Board board, int timeInSeconds, CardLayout cardLayout, JPanel mainPanel) {
-        board.setTimer(timeInSeconds);
+        String whitePlayerName = whitePlayerNameField.getText().trim();
+        String blackPlayerName = blackPlayerNameField.getText().trim();
+
+        board.setPlayerNames(whitePlayerName, blackPlayerName);
+        Main.startTimers(timeInSeconds); // Start the timers
         cardLayout.show(mainPanel, "Board");
     }
 
     private JButton createStyledButton(String text) {
         JButton button = new JButton(text);
-        // Apply any desired styling to your button here
+        // Style the button if needed
         return button;
     }
 
     private void playSound(String soundFileName) {
-        try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(getClass().getResourceAsStream(soundFileName));
+        try (AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
+                getClass().getResourceAsStream(soundFileName))) {
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             clip.start();
@@ -97,4 +97,6 @@ public class Menu extends JPanel {
             g.drawImage(backgroundImage, 0, 0, this.getWidth(), this.getHeight(), this);
         }
     }
+
+    // ... [Any additional methods you have in your Menu class]
 }
