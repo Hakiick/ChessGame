@@ -52,7 +52,9 @@ public class Input extends MouseAdapter {
                     board.selectedPiece.setXPos(board.selectedPiece.getCol() * board.getTileSize());
                     board.selectedPiece.setYPos(board.selectedPiece.getRow() * board.getTileSize());
                 }
-            } catch (Exception | InvalidMoveException ex) {
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            } catch (InvalidMoveException ex) {
                 throw new RuntimeException(ex);
             }
         }
