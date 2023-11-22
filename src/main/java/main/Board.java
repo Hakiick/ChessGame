@@ -255,6 +255,7 @@ public class Board extends JPanel {
 
         // Check if it's the correct player's turn
         if ((isWhiteTurn && !move.getPiece().isWhite()) || (!isWhiteTurn && move.getPiece().isWhite())) {
+
             throw new InvalidMoveException("It is not you turn!");
         }else {
 
@@ -340,6 +341,7 @@ public class Board extends JPanel {
     }
 
     public boolean isValidMove(Move move) throws Exception, InvalidMoveException {
+
         if (sameTeam(move.piece, move.capture)) {
             return false;
         }
