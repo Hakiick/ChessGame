@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-
 public class Main {
     static Timer whiteTimer;
     static Timer blackTimer;
@@ -14,6 +13,7 @@ public class Main {
     static int whiteTimeRemaining = 600; // 10 minutes
     static int blackTimeRemaining = 600; // 10 minutes
     static Board board; // Reference to the Board class
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("CHESS FIGHTER");
@@ -22,14 +22,18 @@ public class Main {
             CardLayout cardLayout = new CardLayout();
             JPanel mainPanel = new JPanel(cardLayout);
 
-            // Initialize the timer labels with default text
-            whiteTimeLabel = new JLabel("White Timer: 00:00");
-            blackTimeLabel = new JLabel("Black Timer: 00:00");
+            // Initialize the Board and Menu
+            whiteTimeLabel = new JLabel("10:00");
+            blackTimeLabel = new JLabel("10:00");
             board = new Board(whiteTimeLabel, blackTimeLabel);
 
-            Menu menu = null;
-            menu = new Menu(frame, board, cardLayout, mainPanel);
+            // Create and add Menu and ControlPanel to mainPanel
+            Menu menu = new Menu(frame, board, cardLayout, mainPanel);
             mainPanel.add(menu, "Menu");
+
+            ControlPanel controlPanel = new ControlPanel(frame, board, cardLayout, mainPanel);
+            mainPanel.add(controlPanel, "ControlPanel");
+
             mainPanel.add(board, "Board");
 
             frame.add(mainPanel);
@@ -38,10 +42,22 @@ public class Main {
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
 
-            initializeTimers(); // Initialize timers
+            // Initialize timers but do not start them
+            initializeTimers(); // This just sets up the timers without starting them
+
         });
     }
-    private static void initializeTimers() {
+    public static void startTimers(int timeInSeconds) {
+        whiteTimeRemaining = timeInSeconds;
+        blackTimeRemaining = timeInSeconds;
+        whiteTimeLabel.setText(formatTime(whiteTimeRemaining));
+        blackTimeLabel.setText(formatTime(blackTimeRemaining));
+
+        // Start only the white timer
+        whiteTimer.start();
+    }
+
+    public static void initializeTimers() {
         ActionListener timerListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == whiteTimer) {
@@ -66,16 +82,26 @@ public class Main {
 
         whiteTimer = new Timer(1000, timerListener);
         blackTimer = new Timer(1000, timerListener);
+
+        // Set the initial time but don't start the timers
     }
 
-    static void startTimers(int timeInSeconds) {
+    public static void resetTimers(int timeInSeconds) {
+        // Reset the time for both players
         whiteTimeRemaining = timeInSeconds;
         blackTimeRemaining = timeInSeconds;
+
+        // Update the timer labels
+        whiteTimeLabel.setText(formatTime(whiteTimeRemaining));
+        blackTimeLabel.setText(formatTime(blackTimeRemaining));
+
+        // Do not start the timers here
     }
 
-    static String formatTime(int timeInSeconds) {
+    public static String formatTime(int timeInSeconds) {
         int minutes = timeInSeconds / 60;
         int seconds = timeInSeconds % 60;
         return String.format("%02d:%02d", minutes, seconds);
     }
 }
+

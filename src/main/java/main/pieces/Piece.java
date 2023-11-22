@@ -47,7 +47,7 @@ public class Piece {
 //            sheetScale = sheet.getWidth() / 6;
 //        } catch (IOException e) {
 //            e.printStackTrace();
-            // Handle the case where the image couldn't be loaded more gracefully
+        // Handle the case where the image couldn't be loaded more gracefully
 //        }
     }
 
