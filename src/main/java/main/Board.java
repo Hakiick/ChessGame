@@ -6,6 +6,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.io.IOException;
+import javax.swing.JOptionPane;
+import javax.swing.border.EmptyBorder;
+
+import static main.Main.*;
 
 
 public class Board extends JPanel {
@@ -16,20 +20,27 @@ public class Board extends JPanel {
     private final int boardHeight = 8;
     private final ArrayList<Piece> pieceList;
     private boolean isWhiteTurn = true;
-    private String whitePlayerName;
-    private String blackPlayerName;
+    private Player whitePlayer;
+    private Player blackPlayer;
     public int enPassantTile = -1;
     boolean isFirstMove = true;
     public Piece selectedPiece;
     public Input input;
+    private JLabel whiteScoreLabel;
+    private JLabel blackScoreLabel;
 
-    public Board(JLabel whiteTimeLabel, JLabel blackTimeLabel) {
-        setPreferredSize(new Dimension((boardWidth * tileSize) + (2 * borderSize), (boardHeight * tileSize) + (2 * borderSize)));
+    public Board(JLabel whiteTimeLabel, JLabel blackTimeLabel) {        setPreferredSize(new Dimension((boardWidth * tileSize) + (2 * borderSize), (boardHeight * tileSize) + (2 * borderSize)));
         pieceList = new ArrayList<>();
         input = new Input(this);
         setLayout(new BorderLayout());
+        whiteScoreLabel = new JLabel("White Score: 0");
+        blackScoreLabel = new JLabel("Black Score: 0");
+
+        add(whiteScoreLabel, BorderLayout.WEST);
+        add(blackScoreLabel, BorderLayout.EAST);
         add(whiteTimeLabel, BorderLayout.NORTH);
         add(blackTimeLabel, BorderLayout.SOUTH);
+
         addMouseListener(input);
         addMouseMotionListener(input);
         try {
@@ -39,28 +50,165 @@ public class Board extends JPanel {
             // Handle exception
         }
     }
-    public void setPlayerNames(String whiteName, String blackName) {
-        this.whitePlayerName = whiteName;
-        this.blackPlayerName = blackName;
-    }
-    public void gameOver(String winningColor) {
-        String winner = winningColor.equals("white") ? whitePlayerName : blackPlayerName;
-        JOptionPane.showMessageDialog(null, winner + " wins!");
+    public void resetGame(int timeInSeconds) {
+        // Stopping any running timers
         Main.whiteTimer.stop();
         Main.blackTimer.stop();
-        // Additional cleanup can be done here if necessary.
+
+        // Reset the timers to the selected time
+        resetTimers(timeInSeconds);
+
+        // Clearing existing pieces and re-adding them
+        pieceList.clear();
+        try {
+            addPieces();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Resetting game state
+        isFirstMove = true;
+        isWhiteTurn = true;
+
+        // Resetting scores for both players
+        whitePlayer.resetScore();
+        blackPlayer.resetScore();
+
+        // Update UI
+        repaint();
+        updateScores();
     }
-    public void setTimer(int timeInSeconds) {
-        Main.whiteTimeRemaining = timeInSeconds;
-        Main.blackTimeRemaining = timeInSeconds;
-        Main.whiteTimeLabel.setText(Main.formatTime(timeInSeconds));
-        Main.blackTimeLabel.setText(Main.formatTime(timeInSeconds));
-        if (isWhiteTurn) {
-            Main.whiteTimer.start();
-        } else {
-            Main.blackTimer.start();
+
+  /*  private void initializePlayers() {
+        String whitePlayerName = "Alice"; // Example name
+        String blackPlayerName = "Bob";   // Example name
+
+        this.whitePlayer = Player.loadPlayer(whitePlayerName);
+        this.blackPlayer = Player.loadPlayer(blackPlayerName);
+
+        updateScores();
+    }*/
+
+    public void updateScores() {
+        whiteScoreLabel.setText("White Score: " + whitePlayer.getScore());
+        blackScoreLabel.setText("Black Score: " + blackPlayer.getScore());
+    }
+
+
+
+    public void resetTimers(int timeInSeconds) {
+        // Reset the time for both players
+        whiteTimeRemaining = timeInSeconds;
+        blackTimeRemaining = timeInSeconds;
+
+        // Update the timer labels
+        Main.whiteTimeLabel.setText(Main.formatTime(whiteTimeRemaining));
+        Main.blackTimeLabel.setText(Main.formatTime(blackTimeRemaining));
+    }
+    public void setPlayers(Player whitePlayer, Player blackPlayer) {
+        this.whitePlayer = whitePlayer;
+        this.blackPlayer = blackPlayer;
+        // updateScores();
+    }
+
+
+    public void gameOver(String winningColor) {
+        if (whitePlayer == null || blackPlayer == null) {
+            System.out.println("Error: One of the player objects is null");
+            displayErrorDialog();
+            return;
+        }
+
+        Player winner = winningColor.equals("white") ? whitePlayer : blackPlayer;
+        winner.incrementScore();
+
+        whitePlayer.saveScore();
+        blackPlayer.saveScore();
+        //updateScores();
+
+        SwingUtilities.invokeLater(() -> {
+            JDialog dialog = new JDialog();
+            dialog.setTitle("Game Over!");
+
+            String message = "Winner is: " + winner.getName() + "\nScore: " + winner.getScore();
+            JPanel messagePanel = new JPanel();
+            messagePanel.add(new JLabel(message));
+            dialog.add(messagePanel, BorderLayout.NORTH);
+
+            String[] timerOptions = {"1 Minute", "5 Minutes", "10 Minutes"};
+            JComboBox<String> timerComboBox = new JComboBox<>(timerOptions);
+            dialog.add(timerComboBox, BorderLayout.CENTER);
+
+            JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 10, 10));
+            buttonPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+            JButton restartButton = new JButton("Restart");
+            restartButton.addActionListener(e -> {
+                int timeInSeconds = getSelectedTimeInSeconds((String) timerComboBox.getSelectedItem());
+                resetGame(timeInSeconds);
+                dialog.dispose();
+            });
+            buttonPanel.add(restartButton);
+
+            JButton exitButton = new JButton("Exit");
+            exitButton.addActionListener(e -> {
+                dialog.dispose();
+                System.exit(0);
+            });
+            buttonPanel.add(exitButton);
+
+            Dimension buttonSize = new Dimension(80, 30);
+            restartButton.setPreferredSize(buttonSize);
+            exitButton.setPreferredSize(buttonSize);
+
+            dialog.add(buttonPanel, BorderLayout.SOUTH);
+            dialog.setModal(true);
+            dialog.pack();
+            dialog.setLocationRelativeTo(null);
+            dialog.setVisible(true);
+        });
+    }
+
+    private void displayErrorDialog() {
+        JOptionPane.showMessageDialog(null,
+                "An error occurred: one of the players is not available.",
+                "Game Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+
+    private void displayGameOverDialog(Player winner) {
+        SwingUtilities.invokeLater(() -> {
+            // Assuming Player class has a getName method to get the player's name
+            String message = "Game Over!\nWinner: " + winner.getName() +
+                    "\nScore: " + winner.getScore(); // Assuming getScore method in Player class
+
+            // Additional details like timer, score, and restart options can be added here
+
+            JOptionPane.showMessageDialog(null,
+                    message,
+                    "Game Over",
+                    JOptionPane.INFORMATION_MESSAGE);
+        });
+    }
+
+
+
+
+    private int getSelectedTimeInSeconds(String selectedTimer) {
+        switch (selectedTimer) {
+            case "1 Minute":
+                return 60;
+            case "5 Minutes":
+                return 300;
+            case "30 Minutes":
+                return 600;
+            default:
+                return 600; // Default to 10 Minutes
         }
     }
+
+
 
     public Piece getPiece(int col, int row){
 
@@ -88,7 +236,25 @@ public class Board extends JPanel {
                 capture(move.capture);
             }
         }
+        // Start the timer for the first move by the white player
+        if (isFirstMove && move.piece.getColor().equals("white")) {
+            Main.whiteTimer.start();
+            isFirstMove = false;
+        }
+
+        // Switch turns and update timers
+        isWhiteTurn = !isWhiteTurn;
+        if (isWhiteTurn) {
+            Main.blackTimer.stop();
+            Main.whiteTimer.start();
+        } else {
+            Main.whiteTimer.stop();
+            Main.blackTimer.start();
+        }
+
     }
+
+
 
     private void movePawn(Move move) throws IOException {
 
@@ -122,7 +288,7 @@ public class Board extends JPanel {
         capture(move.capture);
 
         // Start the timer for the first move by the white player
-        if (isFirstMove && move.piece.getColor().equals("white")) {
+      /*  if (isFirstMove && move.piece.getColor().equals("white")) {
             Main.whiteTimer.start(); // Start the white timer
         }
 
@@ -134,7 +300,7 @@ public class Board extends JPanel {
         } else {
             Main.whiteTimer.stop();
             Main.blackTimer.start();
-        }
+        }*/
     }
 
     public int getTileNum(int col, int row){
