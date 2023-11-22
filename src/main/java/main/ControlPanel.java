@@ -5,7 +5,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -145,7 +144,6 @@ public class ControlPanel extends JPanel {
         button.setPreferredSize(new Dimension(150, 50)); // Set both buttons to the same size
         return button;
     }
-
     private int getSelectedTimeInSeconds(String selectedTimer) {
         return switch (selectedTimer) {
 

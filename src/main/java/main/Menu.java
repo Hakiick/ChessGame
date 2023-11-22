@@ -12,61 +12,70 @@ import javax.imageio.ImageIO;
 
 public class Menu extends JPanel {
     private BufferedImage backgroundImage;
-    private JLabel welcomeLabel;
+    public final JLabel welcomeLabel;
     private Timer animationTimer;
 
-    public Menu(JFrame frame, Board board, CardLayout cardLayout, JPanel mainPanel) {
+    public Menu(JFrame frame, Board board, CardLayout cardLayout, JPanel mainPanel, Settings settings) {
         try {
             backgroundImage = ImageIO.read(getClass().getResourceAsStream("/craig-manners-3Vd277O1kjQ-unsplash.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(frame, "Unable to load background image.", "Error", JOptionPane.ERROR_MESSAGE);
+            backgroundImage = null;
         }
 
-        setLayout(new BorderLayout());
-
+        setLayout(new GridBagLayout());
         // Animated Welcome Label
         welcomeLabel = new JLabel("Welcome to your Chess Challenge!", JLabel.CENTER);
         welcomeLabel.setFont(new Font("Serif", Font.BOLD, 35));
         animateWelcomeLabel();
-        add(welcomeLabel, BorderLayout.CENTER); // Centering the welcome label
-        // Custom panel for the welcome label to control its vertical position
-        JPanel labelPanel = new JPanel(new GridBagLayout());
-        labelPanel.setOpaque(false);
-        labelPanel.setPreferredSize(new Dimension(frame.getWidth(), frame.getHeight())); // Set the preferred size to your background image size or frame size
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.anchor = GridBagConstraints.NORTH;
-        gbc.weightx = 1;
-        gbc.weighty = 1; // This will push everything to the top
-        gbc.insets = new Insets(30, 0, 0, 0); // You may need to adjust this, especially the top margin
 
-// Ensure the welcome label is added to the labelPanel, not directly to the BorderLayout.CENTER
-        labelPanel.add(welcomeLabel, gbc);
-        add(labelPanel, BorderLayout.CENTER);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(30, 0, 0, 0);
+        gbc.anchor = GridBagConstraints.NORTH;
+        add(welcomeLabel, gbc);
 
         // Panel for buttons at the bottom
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 10, 10));
         buttonPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         buttonPanel.setOpaque(false);
 
-        // Exit button
+        // Create buttons
+        JButton settingsButton = createStyledButton("Settings");
+        settingsButton.addActionListener(e -> {
+            cardLayout.show(mainPanel, "Settings");
+        });
+
         JButton exitButton = createStyledButton("Exit");
         exitButton.addActionListener(e -> {
             playSound();
             System.exit(0);
         });
-        buttonPanel.add(exitButton); // Add the Exit button first
 
-// Next button
         JButton nextButton = createStyledButton("Next");
         nextButton.addActionListener(e -> {
             playSound();
             cardLayout.show(mainPanel, "ControlPanel");
         });
-        buttonPanel.add(nextButton); // Add the Next button second
 
-        add(buttonPanel, BorderLayout.PAGE_END);
+        // Add buttons to the button panel
+        buttonPanel.add(settingsButton);
+        buttonPanel.add(exitButton);
+        buttonPanel.add(nextButton);
+
+        // Add buttonPanel to the Menu panel
+        GridBagConstraints gbc_buttonPanel = new GridBagConstraints();
+        gbc_buttonPanel.gridx = 0;
+        gbc_buttonPanel.gridy = 1;
+        gbc_buttonPanel.weightx = 1.0;
+        gbc_buttonPanel.weighty = 0.1;
+        gbc_buttonPanel.fill = GridBagConstraints.BOTH;
+        add(buttonPanel, gbc_buttonPanel);
 
         setOpaque(false);
     }
@@ -124,7 +133,7 @@ public class Menu extends JPanel {
         }
     }
 
-    private void animateWelcomeLabel() {
+    public void animateWelcomeLabel() {
         ActionListener labelAnimation = new ActionListener() {
             private boolean isColorToggle = false;
 

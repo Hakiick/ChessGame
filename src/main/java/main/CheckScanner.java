@@ -2,7 +2,6 @@ package main;
 
 import main.pieces.Piece;
 import java.awt.Point;
-import java.io.IOException;
 import java.util.List;
 
 public class CheckScanner {
@@ -14,7 +13,7 @@ public class CheckScanner {
         this.board = board;
     }
 
-    public boolean isKingChecked(Move move) throws Exception {
+    public boolean isKingChecked(Move move) throws Exception, InvalidMoveException {
         Piece king = board.findKing(move.piece.isWhite());
         this.kingIsWhite = move.piece.isWhite();
         assert king != null;
@@ -115,7 +114,7 @@ public class CheckScanner {
     }
 
     // Method to check if a piece can capture the threatening piece
-    private boolean canCaptureThreat(Point threatPosition) throws Exception {
+    private boolean canCaptureThreat(Point threatPosition) throws Exception, InvalidMoveException {
         List<Piece> allies = board.getAllies(kingIsWhite);
         for (Piece ally : allies) {
             // threatPosition.x, threatPosition.y => attacking piece location
@@ -131,7 +130,7 @@ public class CheckScanner {
     }
 
     // simulation before move | to check if the king is in danger
-    public boolean leavesKingInCheck(Move potentialMove) throws Exception {
+    public boolean leavesKingInCheck(Move potentialMove) throws Exception, InvalidMoveException {
         // piece that will capture the attacking piece
         Piece movingPiece = potentialMove.getPiece();
         // attacking piece
@@ -176,32 +175,4 @@ public class CheckScanner {
                 hitByPawn(king, kingCol, kingRow);
     }
 }
-
-    // Method to check if a piece can block the threat from sliding pieces (Rook, Bishop, Queen)
-   /* private boolean canBlockThreat(Piece king, Point threatPosition, String threatPieceType) {
-        if (!isSlidingPiece(threatPieceType)) {
-            return false; // Blocking is not applicable for non-sliding pieces
-        }
-
-        List<Point> pathToKing = getPathToKing(king.getPosition(), threatPosition);
-        List<Piece> allies = board.getAllies(king.isWhite());
-        for (Piece ally : allies) {
-            for (Point blockPosition : pathToKing) {
-                Move potentialMove = new Move(board, ally, blockPosition.x, blockPosition.y);
-                if (board.isValidMove(potentialMove) && !leavesKingInCheck(potentialMove)) {
-                    return true; // Found a valid move to block the threat
-                }
-            }
-        }
-        return false;
-    }
-
-    private List<Point> getPathToKing(Point kingPosition, Point threatPosition) {
-        // Implement logic to return all positions between the king and the threatening piece
-        // This depends on the type of piece (Rook, Bishop, or Queen)
-    }
-
-    private boolean isSlidingPiece(String pieceType) {
-        return pieceType.equals("Rook") || pieceType.equals("Bishop") || pieceType.equals("Queen");
-    }*/
 
