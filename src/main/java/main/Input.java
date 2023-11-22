@@ -43,15 +43,19 @@ public class Input extends MouseAdapter {
         if(board.selectedPiece != null) {
             Move move = new Move(board, board.selectedPiece, col, row);
 
-            if (board.isValidMove(move)){
-                try {
-                    board.makeMove(move);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+            try {
+                if (board.isValidMove(move)){
+                    try {
+                        board.makeMove(move);
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }else{
+                    board.selectedPiece.setXPos(board.selectedPiece.getCol() * board.getTileSize());
+                    board.selectedPiece.setYPos(board.selectedPiece.getRow() * board.getTileSize());
                 }
-            }else{
-                board.selectedPiece.setXPos(board.selectedPiece.getCol() * board.getTileSize());
-                board.selectedPiece.setYPos(board.selectedPiece.getRow() * board.getTileSize());
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
             }
         }
 
