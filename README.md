@@ -11,7 +11,7 @@ Welcome to the CHESS FIGHTER project, a digital interpretation of the classic st
 - Player vs. Player mode.
 - Adherence to international chess standards.
 
-  • Technologies Used
+• Technologies Used
       
 - Programming Language: Java
 - Build Tool: Gradle
