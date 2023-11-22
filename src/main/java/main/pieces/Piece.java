@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import lombok.Getter;
 
-public class Piece {
+public class Piece implements Cloneable {
     @Getter
     @Setter
     protected int col;
@@ -60,4 +60,9 @@ public class Piece {
         }
     }
 
+    @Override
+    public Piece clone() throws CloneNotSupportedException{
+
+        return (Piece) super.clone();
+    }
 }

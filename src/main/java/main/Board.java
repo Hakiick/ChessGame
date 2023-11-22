@@ -8,21 +8,22 @@ import java.util.ArrayList;
 import java.io.IOException;
 import javax.swing.JOptionPane;
 import javax.swing.border.EmptyBorder;
+import java.util.List;
 
 import static main.Main.*;
 
-
 public class Board extends JPanel {
     @Getter
-    private final int tileSize = 85;
-    private final int borderSize = 1;
-    private final int boardWidth = 8;
-    private final int boardHeight = 8;
-    private final ArrayList<Piece> pieceList;
+    private int tileSize = 85;
+    private int borderSize = 1;
+    private int boardWidth = 8;
+    private int boardHeight = 8;
+    private ArrayList<Piece> pieceList;
     private boolean isWhiteTurn = true;
     private Player whitePlayer;
     private Player blackPlayer;
     public int enPassantTile = -1;
+    CheckScanner checkScanner = new CheckScanner(this);
     boolean isFirstMove = true;
     public Piece selectedPiece;
     public Input input;
@@ -79,22 +80,10 @@ public class Board extends JPanel {
         updateScores();
     }
 
-  /*  private void initializePlayers() {
-        String whitePlayerName = "Alice"; // Example name
-        String blackPlayerName = "Bob";   // Example name
-
-        this.whitePlayer = Player.loadPlayer(whitePlayerName);
-        this.blackPlayer = Player.loadPlayer(blackPlayerName);
-
-        updateScores();
-    }*/
-
     public void updateScores() {
         whiteScoreLabel.setText("White Score: " + whitePlayer.getScore());
         blackScoreLabel.setText("Black Score: " + blackPlayer.getScore());
     }
-
-
 
     public void resetTimers(int timeInSeconds) {
         // Reset the time for both players
@@ -110,7 +99,6 @@ public class Board extends JPanel {
         this.blackPlayer = blackPlayer;
         // updateScores();
     }
-
 
     public void gameOver(String winningColor) {
         if (whitePlayer == null || blackPlayer == null) {
@@ -176,7 +164,6 @@ public class Board extends JPanel {
                 JOptionPane.ERROR_MESSAGE);
     }
 
-
     private void displayGameOverDialog(Player winner) {
         SwingUtilities.invokeLater(() -> {
             // Assuming Player class has a getName method to get the player's name
@@ -186,14 +173,11 @@ public class Board extends JPanel {
             // Additional details like timer, score, and restart options can be added here
 
             JOptionPane.showMessageDialog(null,
-                    message,
-                    "Game Over",
-                    JOptionPane.INFORMATION_MESSAGE);
+                message,
+                "Game Over",
+                JOptionPane.INFORMATION_MESSAGE);
         });
     }
-
-
-
 
     private int getSelectedTimeInSeconds(String selectedTimer) {
         switch (selectedTimer) {
@@ -208,8 +192,6 @@ public class Board extends JPanel {
         }
     }
 
-
-
     public Piece getPiece(int col, int row){
 
         for (Piece piece : pieceList){
@@ -221,10 +203,19 @@ public class Board extends JPanel {
         return null;
     }
 
-    public void makeMove(Move move) throws IOException {
-        if (!isValidMove(move)) {
-            return; // If the move is not valid, do not proceed
-        }else {
+    public List<Piece> getAllies(boolean isWhite){
+        List<Piece> allies = new ArrayList<>();
+        for (Piece piece : pieceList){
+            if (piece.isWhite() == isWhite){
+                allies.add(piece);
+            }
+        }
+        return allies;
+    }
+
+    public void makeMove(Move move) throws Exception {
+        if (isValidMove(move)) {
+
             if (move.piece.getName().equals("Pawn")) {
                 movePawn(move);
             } else {
@@ -232,6 +223,8 @@ public class Board extends JPanel {
                 move.piece.setRow(move.newRow);
                 move.piece.setXPos(move.newCol * tileSize);
                 move.piece.setYPos(move.newRow * tileSize);
+
+                move.piece.isFirstMove = false;
 
                 capture(move.capture);
             }
@@ -251,10 +244,7 @@ public class Board extends JPanel {
             Main.whiteTimer.stop();
             Main.blackTimer.start();
         }
-
     }
-
-
 
     private void movePawn(Move move) throws IOException {
 
@@ -287,20 +277,6 @@ public class Board extends JPanel {
 
         capture(move.capture);
 
-        // Start the timer for the first move by the white player
-      /*  if (isFirstMove && move.piece.getColor().equals("white")) {
-            Main.whiteTimer.start(); // Start the white timer
-        }
-
-        // Switch turns and update timers
-        isWhiteTurn = !isWhiteTurn;
-        if (isWhiteTurn) {
-            Main.blackTimer.stop();
-            Main.whiteTimer.start();
-        } else {
-            Main.whiteTimer.stop();
-            Main.blackTimer.start();
-        }*/
     }
 
     public int getTileNum(int col, int row){
@@ -316,19 +292,22 @@ public class Board extends JPanel {
         pieceList.remove(piece);
     }
 
-    public boolean isValidMove(Move move){
+    public boolean isValidMove(Move move) throws Exception {
+            if (sameTeam(move.piece, move.capture)) {
+                return false;
+            }
 
-        if (sameTeam(move.piece, move.capture)){
-            return false;
-        }
+            if (!move.piece.isValidMovement(move.newCol, move.newRow)) {
+                return false;
+            }
 
-        if (!move.piece.isValidMovement(move.newCol, move.newRow)){
-            return false;
-        }
+            if (move.piece.moveCollidesWithPiece(move.newCol, move.newRow)) {
+                return false;
+            }
 
-        if (move.piece.moveCollidesWithPiece(move.newCol, move.newRow)){
-            return false;
-        }
+            if (checkScanner.isKingChecked(move)) {
+                return false;
+            }
 
         return true;
     }
@@ -341,9 +320,69 @@ public class Board extends JPanel {
         return p1.getColor().equals(p2.getColor());
     }
 
-    // This could be in a method checking for game over conditions
+    Piece findKing (boolean isWhite){
+        for (Piece piece : pieceList) {
+            if (isWhite == piece.isWhite() && piece.getName().equals("King")){
+                return piece;
+            }
+        }
+        return null;
+    }
 
-    private void addPieces() throws IOException {        // classic
+    public void addPiece(Piece piece){
+        if (piece != null) {
+            pieceList.add(piece);
+            // Optionally set the piece's position on the board
+            // This depends on how your Piece class is implemented
+            piece.setCol(piece.getCol());
+            piece.setRow(piece.getRow());
+        }
+    }
+
+    public Board cloneBoard() throws IOException, CloneNotSupportedException {
+
+        JLabel whiteTimeLabel = new JLabel();
+        JLabel blackTimeLabel = new JLabel();
+        Board clonedBoard = new Board(whiteTimeLabel,blackTimeLabel) {
+            // Override methods here. For example:
+            @Override
+            public boolean isValidMove(Move move) {
+                if (sameTeam(move.piece, move.capture)) {
+                    return false;
+                }
+
+                if (!move.piece.isValidMovement(move.newCol, move.newRow)) {
+                    return false;
+                }
+
+                if (move.piece.moveCollidesWithPiece(move.newCol, move.newRow)) {
+                    return false;
+                }
+
+                return true;
+            }
+
+            // Any other methods you want to override can go here
+        };
+
+        // Deep copy the pieceList
+        clonedBoard.pieceList = new ArrayList<>();
+        for (Piece piece : this.pieceList) {
+            clonedBoard.pieceList.add(piece.clone()); // Assuming Piece class has a clone method
+        }
+
+        // Copy other necessary objects and state
+        clonedBoard.checkScanner = new CheckScanner(clonedBoard);
+
+        // Handle Input and selectedPiece
+        clonedBoard.input = this.input; // This might need adjustment
+        clonedBoard.selectedPiece = this.selectedPiece; // This might need adjustment
+
+        return clonedBoard;
+    }
+
+    private void addPieces() throws IOException {
+        // classic
         // Add pieces here. Example: Adding a knight at column 2, row 0
         pieceList.add(new King(this, 3, 0, "white", "classic", true)); // true for white, false for black
         pieceList.add(new Queen(this, 4, 0, "white", "classic", true));
@@ -382,43 +421,6 @@ public class Board extends JPanel {
         pieceList.add(new Pawn(this, 6, 6, "black", "classic", false));
         pieceList.add(new Pawn(this, 7, 6, "black", "classic", false));
 
-        // marvel
-        /* pieceList.add(new King(this, 3, 0, "white", "marvel"));
-        pieceList.add(new Queen(this, 4, 0, "white", "marvel"));
-        pieceList.add(new Rook(this, 0, 0, "white", "marvel"));
-        pieceList.add(new Bishop(this, 2, 0, "white", "marvel"));
-        pieceList.add(new Knight(this, 1, 0, "white", "marvel"));
-        pieceList.add(new Rook(this, 7, 0, "white", "marvel"));
-        pieceList.add(new Bishop(this, 5, 0, "white", "marvel"));
-        pieceList.add(new Knight(this, 6, 0, "white", "marvel"));
-
-        pieceList.add(new Pawn(this, 0, 1, "white", "marvel"));
-        pieceList.add(new Pawn(this, 1, 1, "white", "marvel"));
-        pieceList.add(new Pawn(this, 2, 1, "white", "marvel"));
-        pieceList.add(new Pawn(this, 3, 1, "white", "marvel"));
-        pieceList.add(new Pawn(this, 4, 1, "white", "marvel"));
-        pieceList.add(new Pawn(this, 5, 1, "white", "marvel"));
-        pieceList.add(new Pawn(this, 6, 1, "white", "marvel"));
-        pieceList.add(new Pawn(this, 7, 1, "white", "marvel"));
-        // Add other pieces as needed
-
-        pieceList.add(new King(this, 3, 7, "black", "marvel")); // true for white, false for black
-        pieceList.add(new Queen(this, 4, 7, "black", "marvel"));
-        pieceList.add(new Rook(this, 0, 7, "black", "marvel"));
-        pieceList.add(new Bishop(this, 2, 7, "black", "marvel"));
-        pieceList.add(new Knight(this, 1, 7, "black", "marvel"));
-        pieceList.add(new Rook(this, 7, 7, "black", "marvel"));
-        pieceList.add(new Bishop(this, 5, 7, "black", "marvel"));
-        pieceList.add(new Knight(this, 6, 7, "black", "marvel"));
-
-        pieceList.add(new Pawn(this, 0, 6, "black", "marvel"));
-        pieceList.add(new Pawn(this, 1, 6, "black", "marvel"));
-        pieceList.add(new Pawn(this, 2, 6, "black", "marvel"));
-        pieceList.add(new Pawn(this, 3, 6, "black", "marvel"));
-        pieceList.add(new Pawn(this, 4, 6, "black", "marvel"));
-        pieceList.add(new Pawn(this, 5, 6, "black", "marvel"));
-        pieceList.add(new Pawn(this, 6, 6, "black", "marvel"));
-        pieceList.add(new Pawn(this, 7, 6, "black", "marvel"));*/
         repaint();
     }
 
@@ -438,9 +440,13 @@ public class Board extends JPanel {
         if (selectedPiece != null) {
             for (int row = 0; row < boardHeight; row++) {
                 for (int col = 0; col < boardWidth; col++) {
-                    if(isValidMove(new Move(this, selectedPiece, col, row))) {
-                        g2d.setColor((col + row) % 2 == 0 ? Color.white : Color.gray);
-                        g2d.fillRect(col * tileSize + borderSize, row * tileSize + borderSize, tileSize, tileSize);
+                    try {
+                        if(isValidMove(new Move(this, selectedPiece, col, row))) {
+                            g2d.setColor((col + row) % 2 == 0 ? Color.white : Color.gray);
+                            g2d.fillRect(col * tileSize + borderSize, row * tileSize + borderSize, tileSize, tileSize);
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
                     }
                 }
             }

@@ -1,12 +1,14 @@
 package main;
 
+import lombok.Getter;
 import main.pieces.Piece;
 
-public class Move {
+public class Move implements Cloneable{
     private int oldCol;
     private int oldRow;
     int newCol;
     int newRow;
+    @Getter
     Piece piece;
     Piece capture;
 
@@ -19,4 +21,10 @@ public class Move {
 
         this.capture = board.getPiece(newCol, newRow);
     }
+
+    @Override
+    public Move clone() throws CloneNotSupportedException{
+            return (Move) super.clone();
+    }
 }
+
