@@ -213,36 +213,43 @@ public class Board extends JPanel {
         return allies;
     }
 
-    public void makeMove(Move move) throws Exception {
-        if (isValidMove(move)) {
+    public void makeMove(Move move) throws Exception, InvalidMoveException {
 
-            if (move.piece.getName().equals("Pawn")) {
-                movePawn(move);
-            } else {
-                move.piece.setCol(move.newCol);
-                move.piece.setRow(move.newRow);
-                move.piece.setXPos(move.newCol * tileSize);
-                move.piece.setYPos(move.newRow * tileSize);
+        // Check if it's the correct player's turn
+        if ((isWhiteTurn && !move.getPiece().isWhite()) || (!isWhiteTurn && move.getPiece().isWhite())) {
+            throw new InvalidMoveException("It's not your turn!");
+        }else {
 
-                move.piece.isFirstMove = false;
+            if (isValidMove(move)) {
 
-                capture(move.capture);
+                if (move.piece.getName().equals("Pawn")) {
+                    movePawn(move);
+                } else {
+                    move.piece.setCol(move.newCol);
+                    move.piece.setRow(move.newRow);
+                    move.piece.setXPos(move.newCol * tileSize);
+                    move.piece.setYPos(move.newRow * tileSize);
+
+                    move.piece.isFirstMove = false;
+
+                    capture(move.capture);
+                }
             }
-        }
-        // Start the timer for the first move by the white player
-        if (isFirstMove && move.piece.getColor().equals("white")) {
-            Main.whiteTimer.start();
-            isFirstMove = false;
-        }
+            // Start the timer for the first move by the white player
+            if (isFirstMove && move.piece.getColor().equals("white")) {
+                Main.whiteTimer.start();
+                isFirstMove = false;
+            }
 
-        // Switch turns and update timers
-        isWhiteTurn = !isWhiteTurn;
-        if (isWhiteTurn) {
-            Main.blackTimer.stop();
-            Main.whiteTimer.start();
-        } else {
-            Main.whiteTimer.stop();
-            Main.blackTimer.start();
+            // Switch turns and update timers
+            isWhiteTurn = !isWhiteTurn;
+            if (isWhiteTurn) {
+                Main.blackTimer.stop();
+                Main.whiteTimer.start();
+            } else {
+                Main.whiteTimer.stop();
+                Main.blackTimer.start();
+            }
         }
     }
 
@@ -292,7 +299,7 @@ public class Board extends JPanel {
         pieceList.remove(piece);
     }
 
-    public boolean isValidMove(Move move) throws Exception {
+    public boolean isValidMove(Move move) throws Exception, InvalidMoveException {
             if (sameTeam(move.piece, move.capture)) {
                 return false;
             }
@@ -446,6 +453,8 @@ public class Board extends JPanel {
                             g2d.fillRect(col * tileSize + borderSize, row * tileSize + borderSize, tileSize, tileSize);
                         }
                     } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    } catch (InvalidMoveException e) {
                         throw new RuntimeException(e);
                     }
                 }

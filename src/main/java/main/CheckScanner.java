@@ -14,7 +14,7 @@ public class CheckScanner {
         this.board = board;
     }
 
-    public boolean isKingChecked(Move move) throws Exception {
+    public boolean isKingChecked(Move move) throws Exception, InvalidMoveException {
         Piece king = board.findKing(move.piece.isWhite());
         this.kingIsWhite = move.piece.isWhite();
         assert king != null;
@@ -115,7 +115,7 @@ public class CheckScanner {
     }
 
     // Method to check if a piece can capture the threatening piece
-    private boolean canCaptureThreat(Point threatPosition) throws Exception {
+    private boolean canCaptureThreat(Point threatPosition) throws Exception, InvalidMoveException {
         List<Piece> allies = board.getAllies(kingIsWhite);
         for (Piece ally : allies) {
             // threatPosition.x, threatPosition.y => attacking piece location
@@ -131,7 +131,7 @@ public class CheckScanner {
     }
 
     // simulation before move | to check if the king is in danger
-    public boolean leavesKingInCheck(Move potentialMove) throws Exception {
+    public boolean leavesKingInCheck(Move potentialMove) throws Exception, InvalidMoveException {
         // piece that will capture the attacking piece
         Piece movingPiece = potentialMove.getPiece();
         // attacking piece
