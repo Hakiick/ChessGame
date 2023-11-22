@@ -7,8 +7,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import lombok.Getter;
+import main.Move;
 
-public class Piece implements Cloneable {
+public class Piece {
     @Getter
     @Setter
     protected int col;
@@ -35,34 +36,22 @@ public class Piece implements Cloneable {
     protected int sheetScale;
     protected Image sprite;
     protected Board board;
+    private final int borderSize = 130;
 
     public Piece(Board board) throws IOException{
         this.board = board;
-//        try {
-//            URL imageUrl = getClass().getResource("/1920px-Chess_Pieces_Sprite.png");
-//            if (imageUrl == null) {
-//                throw new IOException("Resource not found: /1920px-Chess_Pieces_Sprite.png");
-//            }
-//            sheet = ImageIO.read(imageUrl);
-//            sheetScale = sheet.getWidth() / 6;
-//        } catch (IOException e) {
-//            e.printStackTrace();
-        // Handle the case where the image couldn't be loaded more gracefully
-//        }
     }
 
     public boolean isValidMovement(int col, int row){return true;}
     public boolean moveCollidesWithPiece(int col, int row){return false;}
+    public Piece cloned() throws CloneNotSupportedException{
+        return (Piece) super.clone();
+    }
 
     public void paint(Graphics2D g2d) {
         if (sprite != null) {
-            g2d.drawImage(sprite, xPos, yPos, null);
+            g2d.drawImage(sprite, xPos+ borderSize, yPos, null);
         }
     }
 
-    @Override
-    public Piece clone() throws CloneNotSupportedException{
-
-        return (Piece) super.clone();
-    }
 }

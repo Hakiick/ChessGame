@@ -8,16 +8,18 @@ import java.util.ArrayList;
 import java.io.IOException;
 import javax.swing.JOptionPane;
 import javax.swing.border.EmptyBorder;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.util.List;
-
 import static main.Main.*;
+
 
 public class Board extends JPanel {
     @Getter
-    private int tileSize = 85;
-    private int borderSize = 1;
-    private int boardWidth = 8;
-    private int boardHeight = 8;
+    private final int tileSize = 85;
+    private final int borderSize = 130;
+    private final int boardWidth = 8;
+    private final int boardHeight = 8;
     private ArrayList<Piece> pieceList;
     private boolean isWhiteTurn = true;
     private Player whitePlayer;
@@ -29,14 +31,30 @@ public class Board extends JPanel {
     public Input input;
     private JLabel whiteScoreLabel;
     private JLabel blackScoreLabel;
+    private BufferedImage backgroundImage;
 
-    public Board(JLabel whiteTimeLabel, JLabel blackTimeLabel) {        setPreferredSize(new Dimension((boardWidth * tileSize) + (2 * borderSize), (boardHeight * tileSize) + (2 * borderSize)));
+    String theme = "classic";
+
+    public Board(JFrame frame, JLabel whiteTimeLabel, JLabel blackTimeLabel) throws IOException {        setPreferredSize(new Dimension((boardWidth * tileSize) + (2 * borderSize), (boardHeight * tileSize) + 1));
         pieceList = new ArrayList<>();
         input = new Input(this);
         setLayout(new BorderLayout());
+        Font font = new Font("Arial", Font.BOLD, 20);
+        Font font2 = new Font("Arial", Font.BOLD, 15);
         whiteScoreLabel = new JLabel("White Score: 0");
         blackScoreLabel = new JLabel("Black Score: 0");
 
+        whiteScoreLabel.setFont(font2);
+        whiteScoreLabel.setForeground(Color.WHITE);
+
+        blackScoreLabel.setFont(font2);
+        blackScoreLabel.setForeground(Color.WHITE);
+
+
+        whiteTimeLabel.setFont(font);
+        whiteTimeLabel.setForeground(Color.WHITE);
+        blackTimeLabel.setFont(font);
+        blackTimeLabel.setForeground(Color.WHITE);
         add(whiteScoreLabel, BorderLayout.WEST);
         add(blackScoreLabel, BorderLayout.EAST);
         add(whiteTimeLabel, BorderLayout.NORTH);
@@ -44,11 +62,21 @@ public class Board extends JPanel {
 
         addMouseListener(input);
         addMouseMotionListener(input);
+        System.out.println(Settings.getSwitch());
+
+        addPieces();
+
+
+        if (Settings.getSwitch() == true){
+            theme = Settings.getTheme();
+        }
         try {
-            addPieces(); // Initialize and add pieces to the board
+            backgroundImage = ImageIO.read(getClass().getResourceAsStream("/" + theme + "_fond.png"));
         } catch (IOException e) {
             e.printStackTrace();
-            // Handle exception
+            JOptionPane.showMessageDialog(frame, "Unable to load background image.", "Error", JOptionPane.ERROR_MESSAGE);
+            // Handle how you want your program to react if the background cannot be loaded
+            backgroundImage = null;
         }
     }
     public void resetGame(int timeInSeconds) {
@@ -85,10 +113,13 @@ public class Board extends JPanel {
         blackScoreLabel.setText("Black Score: " + blackPlayer.getScore());
     }
 
+
+
     public void resetTimers(int timeInSeconds) {
         // Reset the time for both players
         whiteTimeRemaining = timeInSeconds;
         blackTimeRemaining = timeInSeconds;
+
 
         // Update the timer labels
         Main.whiteTimeLabel.setText(Main.formatTime(whiteTimeRemaining));
@@ -97,8 +128,9 @@ public class Board extends JPanel {
     public void setPlayers(Player whitePlayer, Player blackPlayer) {
         this.whitePlayer = whitePlayer;
         this.blackPlayer = blackPlayer;
-        // updateScores();
+       // updateScores();
     }
+
 
     public void gameOver(String winningColor) {
         if (whitePlayer == null || blackPlayer == null) {
@@ -164,6 +196,7 @@ public class Board extends JPanel {
                 JOptionPane.ERROR_MESSAGE);
     }
 
+
     private void displayGameOverDialog(Player winner) {
         SwingUtilities.invokeLater(() -> {
             // Assuming Player class has a getName method to get the player's name
@@ -173,11 +206,14 @@ public class Board extends JPanel {
             // Additional details like timer, score, and restart options can be added here
 
             JOptionPane.showMessageDialog(null,
-                message,
-                "Game Over",
-                JOptionPane.INFORMATION_MESSAGE);
+                    message,
+                    "Game Over",
+                    JOptionPane.INFORMATION_MESSAGE);
         });
     }
+
+
+
 
     private int getSelectedTimeInSeconds(String selectedTimer) {
         switch (selectedTimer) {
@@ -192,6 +228,8 @@ public class Board extends JPanel {
         }
     }
 
+
+
     public Piece getPiece(int col, int row){
 
         for (Piece piece : pieceList){
@@ -203,7 +241,7 @@ public class Board extends JPanel {
         return null;
     }
 
-    public List<Piece> getAllies(boolean isWhite){
+    public java.util.List<Piece> getAllies(boolean isWhite){
         List<Piece> allies = new ArrayList<>();
         for (Piece piece : pieceList){
             if (piece.isWhite() == isWhite){
@@ -217,7 +255,8 @@ public class Board extends JPanel {
 
         // Check if it's the correct player's turn
         if ((isWhiteTurn && !move.getPiece().isWhite()) || (!isWhiteTurn && move.getPiece().isWhite())) {
-            throw new InvalidMoveException("It's not your turn!");
+
+            throw new InvalidMoveException("It is not you turn!");
         }else {
 
             if (isValidMove(move)) {
@@ -252,6 +291,8 @@ public class Board extends JPanel {
             }
         }
     }
+
+
 
     private void movePawn(Move move) throws IOException {
 
@@ -300,21 +341,22 @@ public class Board extends JPanel {
     }
 
     public boolean isValidMove(Move move) throws Exception, InvalidMoveException {
-            if (sameTeam(move.piece, move.capture)) {
-                return false;
-            }
 
-            if (!move.piece.isValidMovement(move.newCol, move.newRow)) {
-                return false;
-            }
+        if (sameTeam(move.piece, move.capture)) {
+            return false;
+        }
 
-            if (move.piece.moveCollidesWithPiece(move.newCol, move.newRow)) {
-                return false;
-            }
+        if (!move.piece.isValidMovement(move.newCol, move.newRow)) {
+            return false;
+        }
 
-            if (checkScanner.isKingChecked(move)) {
-                return false;
-            }
+        if (move.piece.moveCollidesWithPiece(move.newCol, move.newRow)) {
+            return false;
+        }
+
+        if (checkScanner.isKingChecked(move)) {
+            return false;
+        }
 
         return true;
     }
@@ -336,6 +378,8 @@ public class Board extends JPanel {
         return null;
     }
 
+    // This could be in a method checking for game over conditions
+
     public void addPiece(Piece piece){
         if (piece != null) {
             pieceList.add(piece);
@@ -345,12 +389,57 @@ public class Board extends JPanel {
             piece.setRow(piece.getRow());
         }
     }
+    private void addPieces() throws IOException {        // classic
+        if (Settings.getSwitch() == true){
+            theme = Settings.getTheme();
+        }
+        // Add pieces here. Example: Adding a knight at column 2, row 0
+        pieceList.add(new King(this, 3, 0, "white", theme, true)); // true for white, false for black
+        pieceList.add(new Queen(this, 4, 0, "white", theme, true));
+        pieceList.add(new Rook(this, 0, 0, "white", theme, true));
+        pieceList.add(new Bishop(this, 2, 0, "white", theme, true));
+        pieceList.add(new Knight(this, 1, 0, "white", theme, true));
+        pieceList.add(new Rook(this, 7, 0, "white", theme, true));
+        pieceList.add(new Bishop(this, 5, 0, "white", theme, true));
+        pieceList.add(new Knight(this, 6, 0, "white", theme, true));
+
+        pieceList.add(new Pawn(this, 0, 1, "white", theme, true));
+        pieceList.add(new Pawn(this, 1, 1, "white", theme, true));
+        pieceList.add(new Pawn(this, 2, 1, "white", theme, true));
+        pieceList.add(new Pawn(this, 3, 1, "white", theme, true));
+        pieceList.add(new Pawn(this, 4, 1, "white", theme, true));
+        pieceList.add(new Pawn(this, 5, 1, "white", theme, true));
+        pieceList.add(new Pawn(this, 6, 1, "white", theme, true));
+        pieceList.add(new Pawn(this, 7, 1, "white", theme, true));
+        // Add other pieces as needed
+
+        pieceList.add(new King(this, 3, 7, "black", theme, false));
+        pieceList.add(new Queen(this, 4, 7, "black", theme, false));
+        pieceList.add(new Rook(this, 0, 7, "black", theme, false));
+        pieceList.add(new Bishop(this, 2, 7, "black", theme, false));
+        pieceList.add(new Knight(this, 1, 7, "black", theme, false));
+        pieceList.add(new Rook(this, 7, 7, "black", theme, false));
+        pieceList.add(new Bishop(this, 5, 7, "black", theme, false));
+        pieceList.add(new Knight(this, 6, 7, "black", theme, false));
+
+        pieceList.add(new Pawn(this, 0, 6, "black", theme, false));
+        pieceList.add(new Pawn(this, 1, 6, "black", theme, false));
+        pieceList.add(new Pawn(this, 2, 6, "black", theme, false));
+        pieceList.add(new Pawn(this, 3, 6, "black", theme, false));
+        pieceList.add(new Pawn(this, 4, 6, "black", theme, false));
+        pieceList.add(new Pawn(this, 5, 6, "black", theme, false));
+        pieceList.add(new Pawn(this, 6, 6, "black", theme, false));
+        pieceList.add(new Pawn(this, 7, 6, "black", theme, false));
+        repaint();
+    }
+
 
     public Board cloneBoard() throws IOException, CloneNotSupportedException {
 
         JLabel whiteTimeLabel = new JLabel();
         JLabel blackTimeLabel = new JLabel();
-        Board clonedBoard = new Board(whiteTimeLabel,blackTimeLabel) {
+        JFrame frame = new JFrame();
+        Board clonedBoard = new Board(frame, whiteTimeLabel,blackTimeLabel) {
             // Override methods here. For example:
             @Override
             public boolean isValidMove(Move move) {
@@ -375,7 +464,7 @@ public class Board extends JPanel {
         // Deep copy the pieceList
         clonedBoard.pieceList = new ArrayList<>();
         for (Piece piece : this.pieceList) {
-            clonedBoard.pieceList.add(piece.clone()); // Assuming Piece class has a clone method
+            clonedBoard.pieceList.add(piece.cloned()); // Assuming Piece class has a clone method
         }
 
         // Copy other necessary objects and state
@@ -388,58 +477,19 @@ public class Board extends JPanel {
         return clonedBoard;
     }
 
-    private void addPieces() throws IOException {
-        // classic
-        // Add pieces here. Example: Adding a knight at column 2, row 0
-        pieceList.add(new King(this, 3, 0, "white", "classic", true)); // true for white, false for black
-        pieceList.add(new Queen(this, 4, 0, "white", "classic", true));
-        pieceList.add(new Rook(this, 0, 0, "white", "classic", true));
-        pieceList.add(new Bishop(this, 2, 0, "white", "classic", true));
-        pieceList.add(new Knight(this, 1, 0, "white", "classic", true));
-        pieceList.add(new Rook(this, 7, 0, "white", "classic", true));
-        pieceList.add(new Bishop(this, 5, 0, "white", "classic", true));
-        pieceList.add(new Knight(this, 6, 0, "white", "classic", true));
-
-        pieceList.add(new Pawn(this, 0, 1, "white", "classic", true));
-        pieceList.add(new Pawn(this, 1, 1, "white", "classic", true));
-        pieceList.add(new Pawn(this, 2, 1, "white", "classic", true));
-        pieceList.add(new Pawn(this, 3, 1, "white", "classic", true));
-        pieceList.add(new Pawn(this, 4, 1, "white", "classic", true));
-        pieceList.add(new Pawn(this, 5, 1, "white", "classic", true));
-        pieceList.add(new Pawn(this, 6, 1, "white", "classic", true));
-        pieceList.add(new Pawn(this, 7, 1, "white", "classic", true));
-        // Add other pieces as needed
-
-        pieceList.add(new King(this, 3, 7, "black", "classic", false));
-        pieceList.add(new Queen(this, 4, 7, "black", "classic", false));
-        pieceList.add(new Rook(this, 0, 7, "black", "classic", false));
-        pieceList.add(new Bishop(this, 2, 7, "black", "classic", false));
-        pieceList.add(new Knight(this, 1, 7, "black", "classic", false));
-        pieceList.add(new Rook(this, 7, 7, "black", "classic", false));
-        pieceList.add(new Bishop(this, 5, 7, "black", "classic", false));
-        pieceList.add(new Knight(this, 6, 7, "black", "classic", false));
-
-        pieceList.add(new Pawn(this, 0, 6, "black", "classic", false));
-        pieceList.add(new Pawn(this, 1, 6, "black", "classic", false));
-        pieceList.add(new Pawn(this, 2, 6, "black", "classic", false));
-        pieceList.add(new Pawn(this, 3, 6, "black", "classic", false));
-        pieceList.add(new Pawn(this, 4, 6, "black", "classic", false));
-        pieceList.add(new Pawn(this, 5, 6, "black", "classic", false));
-        pieceList.add(new Pawn(this, 6, 6, "black", "classic", false));
-        pieceList.add(new Pawn(this, 7, 6, "black", "classic", false));
-
-        repaint();
-    }
-
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
+        if (backgroundImage != null) {
+            g2d.drawImage(backgroundImage, 0, 0, this.getWidth(), this.getHeight(), this);
+
+        }
 
         //paint board
         for (int row = 0; row < boardHeight; row++) {
             for (int col = 0; col < boardWidth; col++) {
                 g2d.setColor((col + row) % 2 == 0 ? new Color(227, 198, 181) : new Color(157, 105, 53));
-                g2d.fillRect(col * tileSize + borderSize, row * tileSize + borderSize, tileSize, tileSize);
+                g2d.fillRect(col * tileSize + borderSize, row * tileSize , tileSize, tileSize);
             }
         }
 
@@ -449,8 +499,8 @@ public class Board extends JPanel {
                 for (int col = 0; col < boardWidth; col++) {
                     try {
                         if(isValidMove(new Move(this, selectedPiece, col, row))) {
-                            g2d.setColor((col + row) % 2 == 0 ? Color.white : Color.gray);
-                            g2d.fillRect(col * tileSize + borderSize, row * tileSize + borderSize, tileSize, tileSize);
+                            g2d.setColor((col + row ) % 2 == 0 ? Color.white : Color.gray);
+                            g2d.fillRect(col * tileSize + borderSize, row * tileSize, tileSize, tileSize);
                         }
                     } catch (Exception e) {
                         throw new RuntimeException(e);

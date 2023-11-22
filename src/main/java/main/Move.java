@@ -24,7 +24,6 @@ public class Move implements Cloneable{
 
     @Override
     public Move clone() throws CloneNotSupportedException{
-            return (Move) super.clone();
+        return (Move) super.clone();
     }
 }
-
