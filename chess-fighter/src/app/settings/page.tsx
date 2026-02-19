@@ -134,20 +134,13 @@ export default function SettingsPage() {
 
       {/* Visual Effects toggle */}
       <section className="mt-6 w-full max-w-2xl sm:mt-8" aria-labelledby="effects-heading">
-        <h2
-          id="effects-heading"
-          className="mb-4 text-lg font-semibold text-foreground sm:text-xl"
-        >
+        <h2 id="effects-heading" className="mb-4 text-lg font-semibold text-foreground sm:text-xl">
           Visual Effects
         </h2>
         <div className="flex items-center justify-between rounded-xl bg-surface p-4">
           <div>
-            <p className="text-sm font-medium text-foreground sm:text-base">
-              Enable WOW Effects
-            </p>
-            <p className="text-xs text-muted sm:text-sm">
-              Particles, shake, confetti, and trails
-            </p>
+            <p className="text-sm font-medium text-foreground sm:text-base">Enable WOW Effects</p>
+            <p className="text-xs text-muted sm:text-sm">Particles, shake, confetti, and trails</p>
           </div>
           <button
             type="button"

@@ -15,13 +15,7 @@ import { useTheme } from '@/themes';
 /*  Types                                                              */
 /* ------------------------------------------------------------------ */
 
-export type EffectEventType =
-  | 'capture'
-  | 'check'
-  | 'checkmate'
-  | 'promotion'
-  | 'move'
-  | 'select';
+export type EffectEventType = 'capture' | 'check' | 'checkmate' | 'promotion' | 'move' | 'select';
 
 export interface EffectEvent {
   id: number;
@@ -49,10 +43,7 @@ export interface EffectsContextValue {
   triggerCheck: (square: { row: number; col: number }) => void;
   triggerCheckmate: (winner: 'white' | 'black') => void;
   triggerPromotion: (square: { row: number; col: number }) => void;
-  triggerMove: (
-    from: { row: number; col: number },
-    to: { row: number; col: number },
-  ) => void;
+  triggerMove: (from: { row: number; col: number }, to: { row: number; col: number }) => void;
   triggerSelect: (square: { row: number; col: number }) => void;
 }
 

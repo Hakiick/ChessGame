@@ -33,9 +33,5 @@ export function ShakeContainer({ currentEvent, children }: ShakeContainerProps) 
     };
   }, []);
 
-  return (
-    <div className={shaking ? 'animate-board-shake' : ''}>
-      {children}
-    </div>
-  );
+  return <div className={shaking ? 'animate-board-shake' : ''}>{children}</div>;
 }
