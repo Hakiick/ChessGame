@@ -29,6 +29,8 @@ interface BoardGameProps {
   selectSquare: (square: SquareType) => void;
   handlePromotion: (pieceType: PieceType) => void;
   resetGame: () => void;
+  // History (optional for backwards compat)
+  isReviewing?: boolean;
 }
 
 interface BoardProps {

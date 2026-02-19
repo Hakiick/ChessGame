@@ -9,7 +9,14 @@ import {
   makeMove,
   getGameResult,
   squaresEqual,
+  moveToAlgebraic,
 } from '@/engine';
+
+interface MoveRecord {
+  move: Move;
+  notation: string;
+  stateAfter: GameState;
+}
 
 interface UseChessGameOptions {
   onMove?: (move: Move, newState: GameState) => void;
@@ -26,6 +33,15 @@ interface UseChessGameReturn {
   handlePromotion: (pieceType: PieceType) => void;
   resetGame: () => void;
   setExternalGameOver: (result: GameResult) => void;
+  // History & replay
+  moveRecords: MoveRecord[];
+  currentMoveIndex: number;
+  isReviewing: boolean;
+  undo: () => void;
+  redo: () => void;
+  goToMove: (index: number) => void;
+  goToStart: () => void;
+  goToEnd: () => void;
 }
 
 export function useChessGame(options?: UseChessGameOptions): UseChessGameReturn {
@@ -36,24 +52,49 @@ export function useChessGame(options?: UseChessGameOptions): UseChessGameReturn 
   const [gameResult, setGameResult] = useState<GameResult | null>(null);
   const [promotionMove, setPromotionMove] = useState<Move | null>(null);
 
+  // History tracking
+  const initialStateRef = useRef<GameState>(gameState);
+  const [moveRecords, setMoveRecords] = useState<MoveRecord[]>([]);
+  const [currentMoveIndex, setCurrentMoveIndex] = useState(-1);
+
+  // isReviewing = true when navigating history (not at the latest move)
+  const isReviewing = moveRecords.length > 0 && currentMoveIndex < moveRecords.length - 1;
+
   // Use ref for onMove to avoid stale closure issues
   const onMoveRef = useRef(options?.onMove);
   onMoveRef.current = options?.onMove;
 
-  const executeMove = useCallback((state: GameState, move: Move): void => {
-    const newState = makeMove(state, move);
-    setGameState(newState);
-    setLastMove(move);
-    setSelectedSquare(null);
-    setValidMoves([]);
+  const executeMove = useCallback(
+    (state: GameState, move: Move): void => {
+      // Generate notation BEFORE executing the move
+      const notation = moveToAlgebraic(state, move);
+      const newState = makeMove(state, move);
 
-    onMoveRef.current?.(move, newState);
+      // Truncate future history if we were reviewing
+      setMoveRecords((prev) => {
+        const truncated = prev.slice(0, currentMoveIndex + 1);
+        return [...truncated, { move, notation, stateAfter: newState }];
+      });
+      setCurrentMoveIndex((prev) => {
+        // After truncation, the new index is the last element
+        const base = Math.min(prev, moveRecords.length - 1);
+        return base + 1;
+      });
 
-    const result = getGameResult(newState);
-    if (result.type !== 'ongoing') {
-      setGameResult(result);
-    }
-  }, []);
+      setGameState(newState);
+      setLastMove(move);
+      setSelectedSquare(null);
+      setValidMoves([]);
+
+      onMoveRef.current?.(move, newState);
+
+      const result = getGameResult(newState);
+      if (result.type !== 'ongoing') {
+        setGameResult(result);
+      }
+    },
+    [currentMoveIndex, moveRecords.length],
+  );
 
   const selectSquare = useCallback(
     (square: Square): void => {
@@ -62,6 +103,9 @@ export function useChessGame(options?: UseChessGameOptions): UseChessGameReturn 
 
       // Promotion dialog is open, do nothing
       if (promotionMove) return;
+
+      // If reviewing history, don't allow new moves (must go to end first)
+      if (isReviewing) return;
 
       const piece = getPieceAt(gameState, square);
 
@@ -91,7 +135,7 @@ export function useChessGame(options?: UseChessGameOptions): UseChessGameReturn 
       setSelectedSquare(null);
       setValidMoves([]);
     },
-    [gameState, selectedSquare, validMoves, gameResult, promotionMove, executeMove],
+    [gameState, selectedSquare, validMoves, gameResult, promotionMove, isReviewing, executeMove],
   );
 
   const handlePromotion = useCallback(
@@ -110,12 +154,16 @@ export function useChessGame(options?: UseChessGameOptions): UseChessGameReturn 
   );
 
   const resetGame = useCallback((): void => {
-    setGameState(createInitialState());
+    const newState = createInitialState();
+    initialStateRef.current = newState;
+    setGameState(newState);
     setSelectedSquare(null);
     setValidMoves([]);
     setLastMove(null);
     setGameResult(null);
     setPromotionMove(null);
+    setMoveRecords([]);
+    setCurrentMoveIndex(-1);
   }, []);
 
   const setExternalGameOver = useCallback((result: GameResult): void => {
@@ -124,6 +172,45 @@ export function useChessGame(options?: UseChessGameOptions): UseChessGameReturn 
     setValidMoves([]);
     setPromotionMove(null);
   }, []);
+
+  // History navigation
+  const goToMove = useCallback(
+    (index: number): void => {
+      if (index < -1 || index >= moveRecords.length) return;
+
+      setCurrentMoveIndex(index);
+      setSelectedSquare(null);
+      setValidMoves([]);
+      setPromotionMove(null);
+
+      if (index === -1) {
+        setGameState(initialStateRef.current);
+        setLastMove(null);
+      } else {
+        setGameState(moveRecords[index].stateAfter);
+        setLastMove(moveRecords[index].move);
+      }
+    },
+    [moveRecords],
+  );
+
+  const undo = useCallback((): void => {
+    if (currentMoveIndex < 0) return;
+    goToMove(currentMoveIndex - 1);
+  }, [currentMoveIndex, goToMove]);
+
+  const redo = useCallback((): void => {
+    if (currentMoveIndex >= moveRecords.length - 1) return;
+    goToMove(currentMoveIndex + 1);
+  }, [currentMoveIndex, moveRecords.length, goToMove]);
+
+  const goToStart = useCallback((): void => {
+    goToMove(-1);
+  }, [goToMove]);
+
+  const goToEnd = useCallback((): void => {
+    goToMove(moveRecords.length - 1);
+  }, [goToMove, moveRecords.length]);
 
   return {
     gameState,
@@ -136,7 +223,15 @@ export function useChessGame(options?: UseChessGameOptions): UseChessGameReturn 
     handlePromotion,
     resetGame,
     setExternalGameOver,
+    moveRecords,
+    currentMoveIndex,
+    isReviewing,
+    undo,
+    redo,
+    goToMove,
+    goToStart,
+    goToEnd,
   };
 }
 
-export type { UseChessGameOptions, UseChessGameReturn };
+export type { UseChessGameOptions, UseChessGameReturn, MoveRecord };
