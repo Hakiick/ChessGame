@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import type { GameState, Square, Move, GameResult, PieceType } from '@/engine';
 import {
   createInitialState,
@@ -10,6 +10,10 @@ import {
   getGameResult,
   squaresEqual,
 } from '@/engine';
+
+interface UseChessGameOptions {
+  onMove?: (move: Move, newState: GameState) => void;
+}
 
 interface UseChessGameReturn {
   gameState: GameState;
@@ -21,9 +25,10 @@ interface UseChessGameReturn {
   selectSquare: (square: Square) => void;
   handlePromotion: (pieceType: PieceType) => void;
   resetGame: () => void;
+  setExternalGameOver: (result: GameResult) => void;
 }
 
-export function useChessGame(): UseChessGameReturn {
+export function useChessGame(options?: UseChessGameOptions): UseChessGameReturn {
   const [gameState, setGameState] = useState<GameState>(createInitialState);
   const [selectedSquare, setSelectedSquare] = useState<Square | null>(null);
   const [validMoves, setValidMoves] = useState<Move[]>([]);
@@ -31,12 +36,18 @@ export function useChessGame(): UseChessGameReturn {
   const [gameResult, setGameResult] = useState<GameResult | null>(null);
   const [promotionMove, setPromotionMove] = useState<Move | null>(null);
 
+  // Use ref for onMove to avoid stale closure issues
+  const onMoveRef = useRef(options?.onMove);
+  onMoveRef.current = options?.onMove;
+
   const executeMove = useCallback((state: GameState, move: Move): void => {
     const newState = makeMove(state, move);
     setGameState(newState);
     setLastMove(move);
     setSelectedSquare(null);
     setValidMoves([]);
+
+    onMoveRef.current?.(move, newState);
 
     const result = getGameResult(newState);
     if (result.type !== 'ongoing') {
@@ -107,6 +118,13 @@ export function useChessGame(): UseChessGameReturn {
     setPromotionMove(null);
   }, []);
 
+  const setExternalGameOver = useCallback((result: GameResult): void => {
+    setGameResult(result);
+    setSelectedSquare(null);
+    setValidMoves([]);
+    setPromotionMove(null);
+  }, []);
+
   return {
     gameState,
     selectedSquare,
@@ -117,5 +135,8 @@ export function useChessGame(): UseChessGameReturn {
     selectSquare,
     handlePromotion,
     resetGame,
+    setExternalGameOver,
   };
 }
+
+export type { UseChessGameOptions, UseChessGameReturn };
