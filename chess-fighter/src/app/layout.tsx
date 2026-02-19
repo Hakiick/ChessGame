@@ -10,7 +10,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: 'Chess Fighter',
-  description: 'Play chess with a fighting game twist. Challenge opponents in intense chess battles.',
+  description:
+    'Play chess with a fighting game twist. Challenge opponents in intense chess battles.',
 };
 
 export const viewport: Viewport = {

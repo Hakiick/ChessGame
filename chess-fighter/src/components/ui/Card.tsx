@@ -21,13 +21,7 @@ const paddingStyles: Record<CardPadding, string> = {
   lg: 'p-6 md:p-8',
 };
 
-function Card({
-  variant = 'default',
-  padding = 'md',
-  className,
-  children,
-  ...props
-}: CardProps) {
+function Card({ variant = 'default', padding = 'md', className, children, ...props }: CardProps) {
   return (
     <div
       className={cn('rounded-xl', variantStyles[variant], paddingStyles[padding], className)}

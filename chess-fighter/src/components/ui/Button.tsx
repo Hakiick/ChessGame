@@ -29,7 +29,10 @@ const sizeStyles: Record<ButtonSize, string> = {
 };
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant = 'primary', size = 'md', loading = false, disabled, className, children, ...props }, ref) => {
+  (
+    { variant = 'primary', size = 'md', loading = false, disabled, className, children, ...props },
+    ref,
+  ) => {
     const isDisabled = disabled || loading;
 
     return (
@@ -49,7 +52,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {loading ? (
-          <span className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" role="status">
+          <span
+            className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
+            role="status"
+          >
             <span className="sr-only">Loading</span>
           </span>
         ) : null}
