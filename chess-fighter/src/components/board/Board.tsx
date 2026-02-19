@@ -197,8 +197,8 @@ export function Board({ game, minimal = false }: BoardProps) {
             className="relative grid grid-cols-8 grid-rows-[repeat(8,1fr)] aspect-square w-[min(calc(100vw-2rem),560px)] touch-none select-none overflow-hidden rounded-sm"
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}
-            role="grid"
-            aria-label="Chess board"
+            role="region"
+            aria-label="Chess board - 8 by 8 grid"
           >
             {Array.from({ length: 8 }, (_, row) =>
               Array.from({ length: 8 }, (_, col) => {

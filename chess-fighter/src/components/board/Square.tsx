@@ -36,7 +36,8 @@ function SquareComponent({
       className={cn(
         'relative flex items-center justify-center aspect-square',
         'min-h-[44px] min-w-[44px]',
-        'outline-none border-none cursor-pointer p-0',
+        'border-none cursor-pointer p-0',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary',
         isLight ? 'bg-board-light' : 'bg-board-dark',
         isSelected && 'ring-2 ring-inset ring-primary',
         isLastMove && (isLight ? 'bg-yellow-300/50' : 'bg-yellow-600/50'),

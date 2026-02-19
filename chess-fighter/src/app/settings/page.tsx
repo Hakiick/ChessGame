@@ -147,7 +147,7 @@ export default function SettingsPage() {
             role="switch"
             aria-checked={effectsEnabled}
             onClick={toggleEffects}
-            className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+            className={`relative inline-flex min-h-[44px] min-w-[44px] w-12 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
               effectsEnabled ? 'bg-primary' : 'bg-muted/40'
             }`}
             aria-label={`Visual effects ${effectsEnabled ? 'enabled' : 'disabled'}`}

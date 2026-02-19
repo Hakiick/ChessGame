@@ -69,7 +69,7 @@ export function MoveList({ moveRecords, currentMoveIndex, onGoToMove }: MoveList
             ref={row.white.index === currentMoveIndex ? activeRef : undefined}
             type="button"
             onClick={() => onGoToMove(row.white.index)}
-            className={`flex-1 px-2 py-1.5 text-left text-xs font-mono transition-colors sm:text-sm ${
+            className={`flex-1 min-h-[44px] px-2 py-1.5 text-left text-xs font-mono transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary sm:text-sm ${
               row.white.index === currentMoveIndex
                 ? 'bg-primary/20 text-primary font-semibold'
                 : 'text-foreground hover:bg-muted/10'
@@ -86,7 +86,7 @@ export function MoveList({ moveRecords, currentMoveIndex, onGoToMove }: MoveList
               ref={row.black.index === currentMoveIndex ? activeRef : undefined}
               type="button"
               onClick={() => onGoToMove(row.black!.index)}
-              className={`flex-1 px-2 py-1.5 text-left text-xs font-mono transition-colors sm:text-sm ${
+              className={`flex-1 min-h-[44px] px-2 py-1.5 text-left text-xs font-mono transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary sm:text-sm ${
                 row.black.index === currentMoveIndex
                   ? 'bg-primary/20 text-primary font-semibold'
                   : 'text-foreground hover:bg-muted/10'
