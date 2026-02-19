@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import type { Move, GameState, Color } from '@/engine';
 import { Board } from '@/components/board';
-import { PlayerSetup, Clock, GameOver } from '@/components/game';
+import { PlayerSetup, Clock, GameOver, MoveList, NavigationControls } from '@/components/game';
 import type { PlayerSetupConfig } from '@/components/game';
 import type { GameOverInfo } from '@/components/game';
 import { useChessGame } from '@/hooks/useChessGame';
@@ -71,6 +71,36 @@ export default function PlayPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game.gameResult, phase]);
+
+  // Keyboard shortcuts for undo/redo
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (phase !== 'playing' && phase !== 'gameover') return;
+
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        game.undo();
+      } else if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+        e.preventDefault();
+        game.redo();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        game.undo();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        game.redo();
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        game.goToStart();
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        game.goToEnd();
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [phase, game]);
 
   function handleStart(setupConfig: PlayerSetupConfig): void {
     setConfig({
@@ -165,6 +195,11 @@ export default function PlayPage() {
                 ? `${config?.whiteName ?? 'White'} to move`
                 : `${config?.blackName ?? 'Black'} to move`}
             </span>
+            {game.isReviewing && (
+              <span className="rounded bg-warning/20 px-2 py-0.5 text-xs font-semibold text-warning">
+                Reviewing
+              </span>
+            )}
           </div>
 
           {/* Board */}
@@ -180,12 +215,39 @@ export default function PlayPage() {
             />
           </div>
 
+          {/* Navigation controls */}
+          <NavigationControls
+            canUndo={game.currentMoveIndex >= 0}
+            canRedo={game.currentMoveIndex < game.moveRecords.length - 1}
+            onGoToStart={game.goToStart}
+            onUndo={game.undo}
+            onRedo={game.redo}
+            onGoToEnd={game.goToEnd}
+          />
+
+          {/* Move list (mobile - below board) */}
+          <div className="w-full max-w-[min(calc(100vw-2rem),560px)] lg:hidden">
+            <MoveList
+              moveRecords={game.moveRecords}
+              currentMoveIndex={game.currentMoveIndex}
+              onGoToMove={game.goToMove}
+            />
+          </div>
+
           {/* Move count */}
           <p className="text-xs text-muted sm:text-sm">Move {game.gameState.fullMoveNumber}</p>
         </div>
 
-        {/* Right panel: info on desktop */}
-        <div className="hidden lg:flex lg:flex-col lg:gap-3 lg:pt-8">
+        {/* Right panel: move list + info on desktop */}
+        <div className="hidden lg:flex lg:w-64 lg:flex-col lg:gap-3 lg:pt-8">
+          <div className="rounded-lg border border-muted/30 bg-surface p-3">
+            <h3 className="mb-2 text-sm font-semibold text-foreground">Moves</h3>
+            <MoveList
+              moveRecords={game.moveRecords}
+              currentMoveIndex={game.currentMoveIndex}
+              onGoToMove={game.goToMove}
+            />
+          </div>
           <div className="rounded-lg border border-muted/30 bg-surface p-4">
             <h3 className="mb-2 text-sm font-semibold text-foreground">Game Info</h3>
             <div className="flex flex-col gap-1 text-xs text-muted">
