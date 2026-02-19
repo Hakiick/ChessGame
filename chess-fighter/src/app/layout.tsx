@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/themes';
+import { EffectsProvider } from '@/components/effects';
 import { Header } from '@/components/layout/Header';
 
 const inter = Inter({
@@ -32,8 +33,10 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <body className="min-h-dvh antialiased">
         <ThemeProvider>
-          <Header />
-          {children}
+          <EffectsProvider>
+            <Header />
+            {children}
+          </EffectsProvider>
         </ThemeProvider>
       </body>
     </html>

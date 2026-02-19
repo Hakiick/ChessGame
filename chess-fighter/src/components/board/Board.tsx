@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import type { Square as SquareType, GameState, GameResult, Move, PieceType } from '@/engine';
 import { squaresEqual, getPieceAt, isInCheck } from '@/engine';
 import { useChessGame } from '@/hooks/useChessGame';
@@ -9,6 +9,13 @@ import { Square } from './Square';
 import { DragLayer } from './DragLayer';
 import { PromotionDialog } from './PromotionDialog';
 import { GameOverBanner } from './GameOverBanner';
+import { useEffects } from '@/components/effects';
+import { ParticleCanvas } from '@/components/effects/ParticleCanvas';
+import { ShakeContainer } from '@/components/effects/ShakeContainer';
+import { CheckFlash } from '@/components/effects/CheckFlash';
+import { CheckmateOverlay } from '@/components/effects/CheckmateOverlay';
+import { MoveTrail } from '@/components/effects/MoveTrail';
+import { SelectionGlow } from '@/components/effects/SelectionGlow';
 
 const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
@@ -48,6 +55,64 @@ export function Board({ game, minimal = false }: BoardProps) {
     handlePromotion,
     resetGame,
   } = game ?? internalGame;
+
+  // Effects system
+  const effects = useEffects();
+  const prevLastMoveRef = useRef<Move | null>(null);
+  const prevSelectedRef = useRef<SquareType | null>(null);
+  const prevGameResultRef = useRef<GameResult | null>(null);
+
+  // Trigger effects based on game state changes
+  useEffect(() => {
+    if (!effects.effectsEnabled) return;
+
+    // Detect new move
+    if (lastMove && lastMove !== prevLastMoveRef.current) {
+      // Move trail
+      effects.triggerMove(lastMove.from, lastMove.to);
+
+      // Capture particles
+      if (lastMove.captured) {
+        effects.triggerCapture(lastMove.to);
+      }
+
+      // Check flash + shake
+      if (lastMove.isCheck && !lastMove.isCheckmate) {
+        const kingSquare = gameState.pieces.find(
+          (p) => p.type === 'king' && p.color === gameState.turn,
+        )?.square;
+        if (kingSquare) {
+          effects.triggerCheck(kingSquare);
+        }
+      }
+    }
+    prevLastMoveRef.current = lastMove;
+  }, [lastMove, gameState, effects]);
+
+  // Detect checkmate
+  useEffect(() => {
+    if (!effects.effectsEnabled) return;
+
+    if (gameResult && gameResult !== prevGameResultRef.current) {
+      if (gameResult.type === 'checkmate' && gameResult.winner) {
+        effects.triggerCheckmate(gameResult.winner);
+      }
+    }
+    prevGameResultRef.current = gameResult;
+  }, [gameResult, effects]);
+
+  // Selection glow
+  useEffect(() => {
+    if (!effects.effectsEnabled) return;
+
+    if (selectedSquare && selectedSquare !== prevSelectedRef.current) {
+      effects.triggerSelect(selectedSquare);
+    } else if (!selectedSquare && prevSelectedRef.current) {
+      // Trigger a non-select event to clear glow — emit a dummy to reset
+      effects.triggerSelect({ row: -1, col: -1 });
+    }
+    prevSelectedRef.current = selectedSquare;
+  }, [selectedSquare, effects]);
 
   const handleDrop = useCallback(
     (from: SquareType, to: SquareType) => {
@@ -122,48 +187,65 @@ export function Board({ game, minimal = false }: BoardProps) {
           ))}
         </div>
 
-        {/* Board grid */}
-        <div
-          ref={boardRef}
-          className="grid grid-cols-8 grid-rows-[repeat(8,1fr)] aspect-square w-[min(calc(100vw-2rem),560px)] touch-none select-none overflow-hidden rounded-sm"
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-          role="grid"
-          aria-label="Chess board"
-        >
-          {Array.from({ length: 8 }, (_, row) =>
-            Array.from({ length: 8 }, (_, col) => {
-              const square: SquareType = { row, col };
-              const piece = getPieceAt(gameState, square);
-              const isSelected = selectedSquare !== null && squaresEqual(square, selectedSquare);
-              const isValidMove = validMoves.some((m) => squaresEqual(m.to, square));
-              const isLastMoveSquare =
-                lastMove !== null &&
-                (squaresEqual(square, lastMove.from) || squaresEqual(square, lastMove.to));
-              const isCheckSquare = kingSquare !== null && squaresEqual(square, kingSquare);
-              const isDraggingThis = dragging !== null && squaresEqual(square, dragging.square);
+        {/* Shake container wraps the board grid */}
+        <ShakeContainer currentEvent={effects.currentEvent}>
+          {/* Board grid */}
+          <div
+            ref={boardRef}
+            className="relative grid grid-cols-8 grid-rows-[repeat(8,1fr)] aspect-square w-[min(calc(100vw-2rem),560px)] touch-none select-none overflow-hidden rounded-sm"
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            role="grid"
+            aria-label="Chess board"
+          >
+            {Array.from({ length: 8 }, (_, row) =>
+              Array.from({ length: 8 }, (_, col) => {
+                const square: SquareType = { row, col };
+                const piece = getPieceAt(gameState, square);
+                const isSelected = selectedSquare !== null && squaresEqual(square, selectedSquare);
+                const isValidMove = validMoves.some((m) => squaresEqual(m.to, square));
+                const isLastMoveSquare =
+                  lastMove !== null &&
+                  (squaresEqual(square, lastMove.from) || squaresEqual(square, lastMove.to));
+                const isCheckSquare = kingSquare !== null && squaresEqual(square, kingSquare);
+                const isDraggingThis = dragging !== null && squaresEqual(square, dragging.square);
 
-              return (
-                <Square
-                  key={`${row}-${col}`}
-                  square={square}
-                  piece={piece}
-                  isSelected={isSelected}
-                  isValidMove={isValidMove}
-                  isLastMove={isLastMoveSquare}
-                  isCheck={isCheckSquare}
-                  isDragging={isDraggingThis}
-                  onClick={() => selectSquare(square)}
-                  onPointerDown={
-                    piece && piece.color === gameState.turn
-                      ? (e) => onPointerDown(e, square, piece)
-                      : undefined
-                  }
-                />
-              );
-            }),
-          )}
-        </div>
+                return (
+                  <Square
+                    key={`${row}-${col}`}
+                    square={square}
+                    piece={piece}
+                    isSelected={isSelected}
+                    isValidMove={isValidMove}
+                    isLastMove={isLastMoveSquare}
+                    isCheck={isCheckSquare}
+                    isDragging={isDraggingThis}
+                    onClick={() => selectSquare(square)}
+                    onPointerDown={
+                      piece && piece.color === gameState.turn
+                        ? (e) => onPointerDown(e, square, piece)
+                        : undefined
+                    }
+                  />
+                );
+              }),
+            )}
+
+            {/* VFX Overlays (inside the board grid for correct positioning) */}
+            <ParticleCanvas
+              boardRef={boardRef}
+              currentEvent={effects.currentEvent}
+              primaryColor={effects.primaryColor}
+              accentColor={effects.accentColor}
+            />
+            <CheckFlash currentEvent={effects.currentEvent} />
+            <MoveTrail currentEvent={effects.currentEvent} primaryColor={effects.primaryColor} />
+            <SelectionGlow
+              currentEvent={effects.currentEvent}
+              primaryColor={effects.primaryColor}
+            />
+          </div>
+        </ShakeContainer>
 
         {/* File letters (a-h) at the bottom */}
         <div
@@ -183,6 +265,9 @@ export function Board({ game, minimal = false }: BoardProps) {
         {/* Game over banner overlay (hidden in minimal mode) */}
         {!minimal && gameResult && <GameOverBanner result={gameResult} onNewGame={resetGame} />}
       </div>
+
+      {/* Checkmate cinematic overlay */}
+      <CheckmateOverlay currentEvent={effects.currentEvent} />
 
       {/* Drag layer */}
       {dragging && <DragLayer piece={dragging.piece} x={dragging.x} y={dragging.y} />}

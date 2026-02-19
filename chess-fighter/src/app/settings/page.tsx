@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useTheme } from '@/themes';
 import type { ThemeConfig } from '@/themes';
+import { useEffects } from '@/components/effects';
 
 function ThemePreviewBoard({ theme }: { theme: ThemeConfig }) {
   return (
@@ -85,6 +86,7 @@ function ThemeCard({
 
 export default function SettingsPage() {
   const { theme: activeTheme, setTheme, themes } = useTheme();
+  const { effectsEnabled, toggleEffects } = useEffects();
 
   return (
     <main className="flex min-h-dvh flex-col items-center px-4 py-6 sm:py-8">
@@ -127,6 +129,42 @@ export default function SettingsPage() {
               onSelect={() => setTheme(t.id)}
             />
           ))}
+        </div>
+      </section>
+
+      {/* Visual Effects toggle */}
+      <section className="mt-6 w-full max-w-2xl sm:mt-8" aria-labelledby="effects-heading">
+        <h2
+          id="effects-heading"
+          className="mb-4 text-lg font-semibold text-foreground sm:text-xl"
+        >
+          Visual Effects
+        </h2>
+        <div className="flex items-center justify-between rounded-xl bg-surface p-4">
+          <div>
+            <p className="text-sm font-medium text-foreground sm:text-base">
+              Enable WOW Effects
+            </p>
+            <p className="text-xs text-muted sm:text-sm">
+              Particles, shake, confetti, and trails
+            </p>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={effectsEnabled}
+            onClick={toggleEffects}
+            className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+              effectsEnabled ? 'bg-primary' : 'bg-muted/40'
+            }`}
+            aria-label={`Visual effects ${effectsEnabled ? 'enabled' : 'disabled'}`}
+          >
+            <span
+              className={`inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${
+                effectsEnabled ? 'translate-x-6' : 'translate-x-1'
+              }`}
+            />
+          </button>
         </div>
       </section>
 
