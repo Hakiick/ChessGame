@@ -87,6 +87,31 @@ function ScoreDisplay({ label, score }: { label: string; score: PlayerScore | nu
 
 export function GameOver({ result, whiteName, blackName, onPlayAgain, onNewGame }: GameOverProps) {
   const savedRef = useRef(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  // Focus management + Escape key
+  useEffect(() => {
+    const el = dialogRef.current;
+    if (!el) return;
+
+    // Focus the first button
+    const btn = el.querySelector<HTMLElement>('button');
+    btn?.focus();
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        onNewGame();
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [onNewGame]);
 
   // Save scores once on mount
   useEffect(() => {
@@ -111,6 +136,7 @@ export function GameOver({ result, whiteName, blackName, onPlayAgain, onNewGame 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div
+        ref={dialogRef}
         className={cn(
           'w-full max-w-sm rounded-xl bg-surface p-6 shadow-2xl',
           'flex flex-col items-center gap-4',

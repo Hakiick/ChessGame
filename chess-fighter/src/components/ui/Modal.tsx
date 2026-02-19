@@ -103,7 +103,7 @@ function Modal({ isOpen, onClose, title, children, className }: ModalProps) {
               </h2>
               <button
                 onClick={onClose}
-                className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted transition-colors hover:bg-background hover:text-foreground"
+                className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-muted transition-colors hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 aria-label="Close modal"
               >
                 <svg

@@ -8,7 +8,7 @@ export const neonTheme: ThemeConfig = {
   bgColor: '#0a0a1a',
   surfaceColor: '#12122a',
   textColor: '#e0e0ff',
-  textMutedColor: '#7070b0',
+  textMutedColor: '#8888c8',
   primaryColor: '#00ffff',
   primaryLightColor: '#40ffff',
   primaryDarkColor: '#00cccc',
