@@ -70,16 +70,14 @@ function ThemeCard({
 
       {/* Color swatches */}
       <div className="flex gap-1.5">
-        {[theme.primaryColor, theme.accentColor, theme.boardLight, theme.boardDark].map(
-          (color) => (
-            <span
-              key={color}
-              className="h-3 w-3 rounded-full sm:h-4 sm:w-4"
-              style={{ backgroundColor: color }}
-              aria-hidden="true"
-            />
-          ),
-        )}
+        {[theme.primaryColor, theme.accentColor, theme.boardLight, theme.boardDark].map((color) => (
+          <span
+            key={color}
+            className="h-3 w-3 rounded-full sm:h-4 sm:w-4"
+            style={{ backgroundColor: color }}
+            aria-hidden="true"
+          />
+        ))}
       </div>
     </button>
   );
