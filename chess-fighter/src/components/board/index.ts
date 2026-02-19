@@ -1,4 +1,4 @@
-export { Board } from './Board';
+export { Board, type BoardProps, type BoardGameProps } from './Board';
 export { Square, type SquareProps } from './Square';
 export { Piece, type PieceProps, PIECE_UNICODE } from './Piece';
 export { DragLayer, type DragLayerProps } from './DragLayer';
