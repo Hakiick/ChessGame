@@ -1,0 +1,205 @@
+# Procedure complete : Claude Code Multi-Agents sur Mobile
+
+> Setup d'un workspace multi-agents accessible depuis ton iPhone sur un serveur Ubuntu existant.
+
+---
+
+## Pre-requis
+
+| Element | Detail |
+|---------|--------|
+| **Serveur Ubuntu 22.04+** | Avec acces SSH (VPS, VM, machine locale...) |
+| **Cle API Anthropic** | `sk-ant-api03-...` depuis [console.anthropic.com](https://console.anthropic.com/settings/keys) |
+| **iPhone/iPad** | Safari avec acces internet |
+
+---
+
+## Etape 1 — Cloner le repo et configurer
+
+Sur le serveur :
+
+```bash
+git clone https://github.com/juninhomax/setup-claude-code-mobile-first.git
+cd setup-claude-code-mobile-first
+```
+
+Copier et remplir le fichier de config :
+
+```bash
+cp config.env.example config.env
+nano config.env
+```
+
+Remplir les valeurs **obligatoires** :
+
+```bash
+# Cle API Anthropic
+ANTHROPIC_API_KEY="sk-ant-api03-TA-CLE-ICI"
+
+# Mot de passe pour VS Code web (choisis un vrai mdp !)
+WEB_PASSWORD="MonSuperMotDePasse123!"
+```
+
+---
+
+## Etape 2 — Lancer le setup
+
+```bash
+sudo bash scripts/setup.sh
+```
+
+Le script installe tout automatiquement :
+- Packages systeme, swap, securite (SSH, UFW)
+- Node.js + Claude Code CLI
+- VS Code web (code-server)
+
+Options utiles :
+
+```bash
+# Sauter une etape (ex: etape 3)
+sudo bash scripts/setup.sh --skip 3
+
+# Reprendre a partir d'une etape
+sudo bash scripts/setup.sh --from 4
+
+# Lancer seulement certaines etapes
+sudo bash scripts/setup.sh --only 1 2
+```
+
+---
+
+## Etape 3 — Configurer la cle API
+
+```bash
+bash scripts/setup-api-key.sh sk-ant-api03-TA-CLE-ICI
+```
+
+Tester que ca marche :
+
+```bash
+source ~/.bashrc
+claude "say hello"
+```
+
+> La premiere fois, Claude affiche un lien a ouvrir dans le navigateur pour activer la session. C'est normal — suis le lien, apres ca marche directement.
+
+---
+
+## Etape 4 — Acceder depuis l'iPhone
+
+### VS Code Web (code-server)
+
+1. Ouvrir Safari sur ton iPhone
+2. Aller a `http://<IP-DU-SERVEUR>:8080/`
+3. Entrer le `WEB_PASSWORD`
+4. Tu as VS Code complet dans le navigateur !
+
+> **Astuce iPhone** : "Ajouter a l'ecran d'accueil" pour un acces plein ecran comme une app native.
+
+---
+
+## Etape 5 — Lancer les agents multi-Claude
+
+Depuis VS Code web ou SSH :
+
+```bash
+# Cloner ou creer ton projet
+cd ~/workspace
+git clone https://github.com/ton-user/ton-projet.git
+cd ton-projet
+
+# Lancer le Forge (mode autonome)
+bash scripts/forge-panes.sh --init
+tmux attach -t forge
+# puis dans l'orchestrateur : /forge <US-numero>
+```
+
+Ca lance une session **tmux** avec l'orchestrateur + monitor. Le Forge cree dynamiquement les agents necessaires :
+
+| Window | Role |
+|--------|------|
+| orchestrateur | Team Lead (Forge) — Claude Code avec /forge |
+| monitor | Dashboard temps reel des agents |
+| *agents* | Crees dynamiquement selon l'US (mobile-dev, stabilizer, etc.) |
+
+### Commandes utiles
+
+```bash
+# Ajouter des agents manuellement
+bash scripts/forge-add-agents.sh mobile-dev responsive-tester stabilizer
+
+# Voir les agents actifs
+bash scripts/forge-add-agents.sh --list
+
+# Retirer tous les agents (fin d'US)
+bash scripts/forge-add-agents.sh --cleanup
+
+# Fermer la session
+bash scripts/forge-panes.sh --kill
+```
+
+---
+
+## Etape 6 — Naviguer dans tmux depuis l'iPhone
+
+Le prefixe tmux est **Ctrl+A** (plus facile que Ctrl+B sur mobile).
+
+| Action | Raccourci |
+|--------|-----------|
+| Aller a l'agent N | `Ctrl+A` puis `1` a `9` |
+| Agent suivant | `Ctrl+A` puis `Tab` |
+| Agent precedent | `Ctrl+A` puis `Shift+Tab` |
+| Vue arbre (tous les agents) | `Ctrl+A` puis `w` |
+| Scroller vers le haut | `Ctrl+A` puis `[` puis fleches |
+| Se detacher (agents continuent) | `Ctrl+A` puis `d` |
+| Se re-attacher | `tmux attach -t forge` |
+
+> Les agents **continuent de tourner** meme si tu fermes Safari. Il suffit de revenir et taper `tmux attach -t forge`.
+
+---
+
+## Comment les agents collaborent
+
+Les agents se coordonnent via le fichier `.claude/board.md` dans ton projet :
+
+```markdown
+# Board de coordination multi-agents
+
+## Projet en cours
+**US**: Implementer l'authentification JWT
+**Branche**: feature/auth-jwt
+**Statut**: en cours
+
+## Taches
+| # | Agent | Tache | Statut | Notes |
+|---|-------|-------|--------|-------|
+| 1 | backend-dev | API /login + /register | done | |
+| 2 | frontend-dev | Formulaire login | in-progress | |
+| 3 | testeur | Tests auth | pending | attend backend |
+
+## Messages inter-agents
+[orchestrateur -> backend-dev] API auth terminee, passe au middleware JWT
+[backend-dev -> testeur] Endpoints prets, tu peux ecrire les tests
+```
+
+Le **Forge** (Team Lead) distribue les taches via `.forge/tasks/`, chaque agent met a jour son statut dans `.forge/status/`, et les resultats sont collectes dans `.forge/results/`.
+
+---
+
+## Resume des URLs d'acces
+
+| Service | URL | Port |
+|---------|-----|------|
+| VS Code web | `http://<IP>:8080/` | 8080 |
+| SSH direct | `ssh user@<IP>` | 22 |
+
+---
+
+## Depannage rapide
+
+| Probleme | Solution |
+|----------|----------|
+| Safari dit "Non securise" | Normal en HTTP. Utiliser un VPN (Tailscale) pour securiser |
+| Connexion coupee sur iPhone | `tmux attach -t forge` pour reprendre |
+| Agent ne demarre pas | Verifier `~/.claude-env` et relancer `forge-panes.sh --init` |
+| Ajouter un agent custom | Creer un skill dans `.claude/skills/<nom>/SKILL.md` |
