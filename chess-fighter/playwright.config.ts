@@ -32,6 +32,17 @@ export default defineConfig({
         viewport: { width: 1440, height: 900 },
       },
     },
+    {
+      name: 'demo',
+      testMatch: /demo-video/,
+      use: {
+        viewport: { width: 1920, height: 1080 },
+        video: {
+          mode: 'on',
+          size: { width: 1920, height: 1080 },
+        },
+      },
+    },
   ],
   webServer: {
     command: 'npm run dev',
