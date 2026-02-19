@@ -59,10 +59,7 @@ export function useChessGame(): UseChessGameReturn {
         const move = validMoves.find((m) => squaresEqual(m.to, square));
         if (move) {
           // Check if this is a pawn promotion
-          if (
-            move.piece.type === 'pawn' &&
-            (move.to.row === 0 || move.to.row === 7)
-          ) {
+          if (move.piece.type === 'pawn' && (move.to.row === 0 || move.to.row === 7)) {
             setPromotionMove(move);
             return;
           }

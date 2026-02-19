@@ -17,11 +17,7 @@ interface UseDragPieceReturn {
   onPointerUp: (e: React.PointerEvent) => void;
 }
 
-function getSquareFromPoint(
-  boardEl: HTMLElement,
-  clientX: number,
-  clientY: number,
-): Square | null {
+function getSquareFromPoint(boardEl: HTMLElement, clientX: number, clientY: number): Square | null {
   const rect = boardEl.getBoundingClientRect();
   const x = clientX - rect.left;
   const y = clientY - rect.top;
@@ -83,11 +79,7 @@ export function useDragPiece(
         return;
       }
 
-      const targetSquare = getSquareFromPoint(
-        boardRef.current,
-        e.clientX,
-        e.clientY,
-      );
+      const targetSquare = getSquareFromPoint(boardRef.current, e.clientX, e.clientY);
 
       if (targetSquare) {
         onDrop(dragging.square, targetSquare);

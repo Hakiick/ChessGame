@@ -56,9 +56,8 @@ export function Board() {
 
   const kingInCheck = isInCheck(gameState, gameState.turn);
   const kingSquare = kingInCheck
-    ? gameState.pieces.find(
-        (p) => p.type === 'king' && p.color === gameState.turn,
-      )?.square ?? null
+    ? (gameState.pieces.find((p) => p.type === 'king' && p.color === gameState.turn)?.square ??
+      null)
     : null;
 
   return (
@@ -67,7 +66,9 @@ export function Board() {
       <div className="flex items-center gap-2 text-sm font-medium text-foreground sm:text-base">
         <span
           className={`inline-block h-3 w-3 rounded-full sm:h-4 sm:w-4 ${
-            gameState.turn === 'white' ? 'bg-white border border-muted' : 'bg-gray-900 border border-gray-600'
+            gameState.turn === 'white'
+              ? 'bg-white border border-muted'
+              : 'bg-gray-900 border border-gray-600'
           }`}
           aria-hidden="true"
         />
@@ -76,9 +77,7 @@ export function Board() {
             ? getResultText(gameResult)
             : `${gameState.turn === 'white' ? 'White' : 'Black'} to move`}
         </span>
-        {kingInCheck && !gameResult && (
-          <span className="text-error font-semibold">Check!</span>
-        )}
+        {kingInCheck && !gameResult && <span className="text-error font-semibold">Check!</span>}
       </div>
 
       {/* Board wrapper with coordinates */}
@@ -108,19 +107,13 @@ export function Board() {
             Array.from({ length: 8 }, (_, col) => {
               const square: SquareType = { row, col };
               const piece = getPieceAt(gameState, square);
-              const isSelected =
-                selectedSquare !== null && squaresEqual(square, selectedSquare);
-              const isValidMove = validMoves.some((m) =>
-                squaresEqual(m.to, square),
-              );
+              const isSelected = selectedSquare !== null && squaresEqual(square, selectedSquare);
+              const isValidMove = validMoves.some((m) => squaresEqual(m.to, square));
               const isLastMoveSquare =
                 lastMove !== null &&
-                (squaresEqual(square, lastMove.from) ||
-                  squaresEqual(square, lastMove.to));
-              const isCheckSquare =
-                kingSquare !== null && squaresEqual(square, kingSquare);
-              const isDraggingThis =
-                dragging !== null && squaresEqual(square, dragging.square);
+                (squaresEqual(square, lastMove.from) || squaresEqual(square, lastMove.to));
+              const isCheckSquare = kingSquare !== null && squaresEqual(square, kingSquare);
+              const isDraggingThis = dragging !== null && squaresEqual(square, dragging.square);
 
               return (
                 <Square
@@ -157,23 +150,14 @@ export function Board() {
         </div>
 
         {/* Promotion dialog overlay */}
-        {promotionMove && (
-          <PromotionDialog
-            color={gameState.turn}
-            onSelect={handlePromotion}
-          />
-        )}
+        {promotionMove && <PromotionDialog color={gameState.turn} onSelect={handlePromotion} />}
 
         {/* Game over banner overlay */}
-        {gameResult && (
-          <GameOverBanner result={gameResult} onNewGame={resetGame} />
-        )}
+        {gameResult && <GameOverBanner result={gameResult} onNewGame={resetGame} />}
       </div>
 
       {/* Drag layer */}
-      {dragging && (
-        <DragLayer piece={dragging.piece} x={dragging.x} y={dragging.y} />
-      )}
+      {dragging && <DragLayer piece={dragging.piece} x={dragging.x} y={dragging.y} />}
 
       {/* New Game button */}
       <button
@@ -185,9 +169,7 @@ export function Board() {
       </button>
 
       {/* Move count */}
-      <p className="text-xs text-muted sm:text-sm">
-        Move {gameState.fullMoveNumber}
-      </p>
+      <p className="text-xs text-muted sm:text-sm">Move {gameState.fullMoveNumber}</p>
     </div>
   );
 }
