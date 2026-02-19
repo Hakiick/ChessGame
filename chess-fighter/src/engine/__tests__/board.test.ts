@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { createInitialState, getPieceAt, makeMove, cloneState } from '../board';
-import type { GameState, Piece, PieceType, Color, Move, Square } from '../types';
+import type { GameState, Piece, PieceType, Color, Move } from '../types';
 
 // Helper to create a custom test state with specific pieces
 function createTestState(
@@ -11,10 +11,10 @@ function createTestState(
     row: number;
     hasMoved?: boolean;
   }>,
-  turn: Color = 'white'
+  turn: Color = 'white',
 ): GameState {
   const board: (Piece | null)[][] = Array.from({ length: 8 }, () =>
-    Array.from({ length: 8 }, () => null)
+    Array.from({ length: 8 }, () => null),
   );
   const pieceList: Piece[] = [];
 
@@ -79,24 +79,16 @@ describe('createInitialState', () => {
 
   it('should place kings at column 4', () => {
     const state = createInitialState();
-    const whiteKing = state.pieces.find(
-      (p) => p.type === 'king' && p.color === 'white'
-    );
-    const blackKing = state.pieces.find(
-      (p) => p.type === 'king' && p.color === 'black'
-    );
+    const whiteKing = state.pieces.find((p) => p.type === 'king' && p.color === 'white');
+    const blackKing = state.pieces.find((p) => p.type === 'king' && p.color === 'black');
     expect(whiteKing?.square).toEqual({ col: 4, row: 7 });
     expect(blackKing?.square).toEqual({ col: 4, row: 0 });
   });
 
   it('should place queens at column 3', () => {
     const state = createInitialState();
-    const whiteQueen = state.pieces.find(
-      (p) => p.type === 'queen' && p.color === 'white'
-    );
-    const blackQueen = state.pieces.find(
-      (p) => p.type === 'queen' && p.color === 'black'
-    );
+    const whiteQueen = state.pieces.find((p) => p.type === 'queen' && p.color === 'white');
+    const blackQueen = state.pieces.find((p) => p.type === 'queen' && p.color === 'black');
     expect(whiteQueen?.square).toEqual({ col: 3, row: 7 });
     expect(blackQueen?.square).toEqual({ col: 3, row: 0 });
   });
@@ -239,7 +231,7 @@ describe('makeMove', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'pawn', color: 'white', col: 4, row: 6 },
       ],
-      'white'
+      'white',
     );
     state.halfMoveClock = 10;
     const pawn = getPieceAt(state, { col: 4, row: 6 })!;
@@ -260,7 +252,7 @@ describe('makeMove', () => {
         { type: 'rook', color: 'white', col: 0, row: 4 },
         { type: 'rook', color: 'black', col: 7, row: 4 },
       ],
-      'white'
+      'white',
     );
     state.halfMoveClock = 10;
     const whiteRook = getPieceAt(state, { col: 0, row: 4 })!;
@@ -282,7 +274,7 @@ describe('makeMove', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'rook', color: 'white', col: 0, row: 7, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     state.halfMoveClock = 5;
     const rook = getPieceAt(state, { col: 0, row: 7 })!;
@@ -303,7 +295,7 @@ describe('makeMove', () => {
         { type: 'rook', color: 'white', col: 0, row: 4 },
         { type: 'knight', color: 'black', col: 3, row: 4 },
       ],
-      'white'
+      'white',
     );
     const rook = getPieceAt(state, { col: 0, row: 4 })!;
     const knight = getPieceAt(state, { col: 3, row: 4 })!;
@@ -315,9 +307,7 @@ describe('makeMove', () => {
     };
     const newState = makeMove(state, move);
     expect(newState.pieces.length).toBe(3);
-    expect(
-      newState.pieces.find((p) => p.type === 'knight')
-    ).toBeUndefined();
+    expect(newState.pieces.find((p) => p.type === 'knight')).toBeUndefined();
     expect(getPieceAt(newState, { col: 3, row: 4 })?.type).toBe('rook');
   });
 
@@ -340,7 +330,7 @@ describe('makeMove', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'rook', color: 'white', col: 0, row: 7, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     state.enPassantSquare = { col: 3, row: 5 };
     const rook = getPieceAt(state, { col: 0, row: 7 })!;
@@ -360,7 +350,7 @@ describe('makeMove', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'pawn', color: 'black', col: 4, row: 1 },
       ],
-      'black'
+      'black',
     );
     state.fullMoveNumber = 5;
     const pawn = getPieceAt(state, { col: 4, row: 1 })!;
@@ -380,7 +370,7 @@ describe('makeMove', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'pawn', color: 'white', col: 4, row: 6 },
       ],
-      'white'
+      'white',
     );
     state.fullMoveNumber = 5;
     const pawn = getPieceAt(state, { col: 4, row: 6 })!;
@@ -402,7 +392,7 @@ describe('makeMove', () => {
         { type: 'pawn', color: 'white', col: 4, row: 3, hasMoved: true },
         { type: 'pawn', color: 'black', col: 3, row: 3, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     state.enPassantSquare = { col: 3, row: 2 };
 
@@ -431,7 +421,7 @@ describe('makeMove', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'pawn', color: 'white', col: 0, row: 1, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     const pawn = getPieceAt(state, { col: 0, row: 1 })!;
     const move: Move = {
@@ -451,7 +441,7 @@ describe('makeMove', () => {
         { type: 'rook', color: 'white', col: 7, row: 7 },
         { type: 'king', color: 'black', col: 4, row: 0 },
       ],
-      'white'
+      'white',
     );
     const king = getPieceAt(state, { col: 4, row: 7 })!;
     const move: Move = {
@@ -477,7 +467,7 @@ describe('makeMove', () => {
         { type: 'rook', color: 'white', col: 0, row: 7 },
         { type: 'king', color: 'black', col: 4, row: 0 },
       ],
-      'white'
+      'white',
     );
     const king = getPieceAt(state, { col: 4, row: 7 })!;
     const move: Move = {
@@ -504,7 +494,7 @@ describe('makeMove', () => {
         { type: 'rook', color: 'white', col: 7, row: 7 },
         { type: 'king', color: 'black', col: 4, row: 0 },
       ],
-      'white'
+      'white',
     );
     const king = getPieceAt(state, { col: 4, row: 7 })!;
     const move: Move = {
@@ -524,7 +514,7 @@ describe('makeMove', () => {
         { type: 'rook', color: 'white', col: 7, row: 7 },
         { type: 'king', color: 'black', col: 4, row: 0 },
       ],
-      'white'
+      'white',
     );
     const rook = getPieceAt(state, { col: 7, row: 7 })!;
     const move: Move = {
@@ -545,7 +535,7 @@ describe('makeMove', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'rook', color: 'black', col: 7, row: 4, hasMoved: true },
       ],
-      'black'
+      'black',
     );
     const blackRook = getPieceAt(state, { col: 7, row: 4 })!;
     const whiteRook = getPieceAt(state, { col: 7, row: 7 })!;
@@ -567,7 +557,7 @@ describe('makeMove', () => {
       to: { col: 4, row: 4 },
       piece: pawn,
     };
-    const newState = makeMove(state, move);
+    makeMove(state, move);
     // Original state should still have the pawn
     expect(getPieceAt(state, { col: 4, row: 6 })?.type).toBe('pawn');
     expect(state.turn).toBe('white');
@@ -580,7 +570,7 @@ describe('makeMove', () => {
         { type: 'king', color: 'white', col: 4, row: 7 },
         { type: 'king', color: 'black', col: 4, row: 0 },
       ],
-      'white'
+      'white',
     );
     const fakeKing: Piece = {
       type: 'king',

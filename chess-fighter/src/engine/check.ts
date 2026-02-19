@@ -19,7 +19,12 @@ export function isSquareAttacked(state: GameState, square: Square, byColor: Colo
 
 function isAttackedBySlidingPiece(state: GameState, square: Square, byColor: Color): boolean {
   // Check rook/queen along straight lines
-  const straightDirs: [number, number][] = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+  const straightDirs: [number, number][] = [
+    [0, 1],
+    [0, -1],
+    [1, 0],
+    [-1, 0],
+  ];
   for (const [dc, dr] of straightDirs) {
     for (let i = 1; i < 8; i++) {
       const checkSquare = { col: square.col + dc * i, row: square.row + dr * i };
@@ -36,7 +41,12 @@ function isAttackedBySlidingPiece(state: GameState, square: Square, byColor: Col
   }
 
   // Check bishop/queen along diagonals
-  const diagDirs: [number, number][] = [[1, 1], [1, -1], [-1, 1], [-1, -1]];
+  const diagDirs: [number, number][] = [
+    [1, 1],
+    [1, -1],
+    [-1, 1],
+    [-1, -1],
+  ];
   for (const [dc, dr] of diagDirs) {
     for (let i = 1; i < 8; i++) {
       const checkSquare = { col: square.col + dc * i, row: square.row + dr * i };
@@ -57,8 +67,14 @@ function isAttackedBySlidingPiece(state: GameState, square: Square, byColor: Col
 
 function isAttackedByKnight(state: GameState, square: Square, byColor: Color): boolean {
   const offsets: [number, number][] = [
-    [-2, -1], [-2, 1], [-1, -2], [-1, 2],
-    [1, -2], [1, 2], [2, -1], [2, 1],
+    [-2, -1],
+    [-2, 1],
+    [-1, -2],
+    [-1, 2],
+    [1, -2],
+    [1, 2],
+    [2, -1],
+    [2, 1],
   ];
 
   for (const [dc, dr] of offsets) {
@@ -95,9 +111,14 @@ function isAttackedByPawn(state: GameState, square: Square, byColor: Color): boo
 
 function isAttackedByKing(state: GameState, square: Square, byColor: Color): boolean {
   const offsets: [number, number][] = [
-    [-1, -1], [-1, 0], [-1, 1],
-    [0, -1],           [0, 1],
-    [1, -1],  [1, 0],  [1, 1],
+    [-1, -1],
+    [-1, 0],
+    [-1, 1],
+    [0, -1],
+    [0, 1],
+    [1, -1],
+    [1, 0],
+    [1, 1],
   ];
 
   for (const [dc, dr] of offsets) {

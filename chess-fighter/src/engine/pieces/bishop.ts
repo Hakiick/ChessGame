@@ -3,7 +3,10 @@ import { isInBounds } from '../types';
 import { getPieceAt } from '../board';
 
 const BISHOP_DIRECTIONS: ReadonlyArray<readonly [number, number]> = [
-  [1, 1], [1, -1], [-1, 1], [-1, -1],
+  [1, 1],
+  [1, -1],
+  [-1, 1],
+  [-1, -1],
 ];
 
 export function getBishopMoves(state: GameState, piece: Piece): Move[] {
@@ -13,7 +16,7 @@ export function getBishopMoves(state: GameState, piece: Piece): Move[] {
 export function getSlidingMoves(
   state: GameState,
   piece: Piece,
-  directions: ReadonlyArray<readonly [number, number]>
+  directions: ReadonlyArray<readonly [number, number]>,
 ): Move[] {
   const moves: Move[] = [];
   const { col, row } = piece.square;

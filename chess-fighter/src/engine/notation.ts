@@ -86,7 +86,7 @@ function getDisambiguation(state: GameState, move: Move): string {
       m.piece.type === piece.type &&
       m.to.col === move.to.col &&
       m.to.row === move.to.row &&
-      (m.from.col !== move.from.col || m.from.row !== move.from.row)
+      (m.from.col !== move.from.col || m.from.row !== move.from.row),
   );
 
   if (ambiguous.length === 0) {

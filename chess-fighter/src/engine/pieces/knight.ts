@@ -3,10 +3,14 @@ import { isInBounds } from '../types';
 import { getPieceAt } from '../board';
 
 const KNIGHT_OFFSETS: ReadonlyArray<readonly [number, number]> = [
-  [-2, -1], [-2, 1],
-  [-1, -2], [-1, 2],
-  [1, -2], [1, 2],
-  [2, -1], [2, 1],
+  [-2, -1],
+  [-2, 1],
+  [-1, -2],
+  [-1, 2],
+  [1, -2],
+  [1, 2],
+  [2, -1],
+  [2, 1],
 ];
 
 export function getKnightMoves(state: GameState, piece: Piece): Move[] {

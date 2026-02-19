@@ -65,9 +65,7 @@ export function positionToFENFragment(state: GameState): string {
   if (state.castlingRights.blackQueenside) castling += 'q';
   if (castling === '') castling = '-';
 
-  const ep = state.enPassantSquare
-    ? squareToAlgebraicInternal(state.enPassantSquare)
-    : '-';
+  const ep = state.enPassantSquare ? squareToAlgebraicInternal(state.enPassantSquare) : '-';
 
   return `${placement} ${activeColor} ${castling} ${ep}`;
 }

@@ -14,12 +14,7 @@ export type {
 export { squaresEqual, isInBounds, oppositeColor } from './types';
 
 // Board
-export {
-  createInitialState,
-  getPieceAt,
-  cloneState,
-  makeMove,
-} from './board';
+export { createInitialState, getPieceAt, cloneState, makeMove } from './board';
 
 // Piece move generation
 export { getPseudoLegalMoves } from './pieces';
@@ -28,13 +23,7 @@ export { getPseudoLegalMoves } from './pieces';
 export { getLegalMoves, getAllLegalMoves } from './moves';
 
 // Check detection
-export {
-  isSquareAttacked,
-  isInCheck,
-  isCheckmate,
-  isStalemate,
-  getGameResult,
-} from './check';
+export { isSquareAttacked, isInCheck, isCheckmate, isStalemate, getGameResult } from './check';
 
 // Rules
 export {

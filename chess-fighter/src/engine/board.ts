@@ -8,7 +8,7 @@ function createPiece(type: PieceType, color: Color, col: number, row: number): P
 
 export function createInitialState(): GameState {
   const board: (Piece | null)[][] = Array.from({ length: 8 }, () =>
-    Array.from({ length: 8 }, () => null)
+    Array.from({ length: 8 }, () => null),
   );
   const pieces: Piece[] = [];
 
@@ -80,7 +80,7 @@ export function getPieceAt(state: GameState, square: Square): Piece | null {
 
 export function cloneState(state: GameState): GameState {
   const board: (Piece | null)[][] = Array.from({ length: 8 }, () =>
-    Array.from({ length: 8 }, () => null)
+    Array.from({ length: 8 }, () => null),
   );
   const pieces: Piece[] = [];
 
@@ -131,9 +131,7 @@ export function makeMove(state: GameState, move: Move): GameState {
       : move.to;
 
     newState.board[captureSquare.row][captureSquare.col] = null;
-    newState.pieces = newState.pieces.filter(
-      (p) => !squaresEqual(p.square, captureSquare)
-    );
+    newState.pieces = newState.pieces.filter((p) => !squaresEqual(p.square, captureSquare));
   }
 
   // Handle promotion
@@ -174,10 +172,7 @@ export function makeMove(state: GameState, move: Move): GameState {
   updateCastlingRights(newState.castlingRights, move);
 
   // Update en passant square (use originalType since promotion changes the type)
-  if (
-    originalType === 'pawn' &&
-    Math.abs(move.to.row - move.from.row) === 2
-  ) {
+  if (originalType === 'pawn' && Math.abs(move.to.row - move.from.row) === 2) {
     newState.enPassantSquare = {
       col: move.from.col,
       row: (move.from.row + move.to.row) / 2,

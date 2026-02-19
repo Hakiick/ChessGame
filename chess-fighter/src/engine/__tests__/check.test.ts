@@ -1,13 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import type { GameState, Piece, PieceType, Color, Square, Move } from '../types';
-import {
-  isInCheck,
-  isSquareAttacked,
-  isCheckmate,
-  isStalemate,
-  getGameResult,
-} from '../check';
-import { makeMove, getPieceAt, createInitialState } from '../board';
+import type { GameState, Piece, PieceType, Color, Square } from '../types';
+import { isInCheck, isSquareAttacked, isCheckmate, isStalemate, getGameResult } from '../check';
 
 // Helper to create a custom test state with specific pieces
 function createTestState(
@@ -27,10 +20,10 @@ function createTestState(
       blackKingside?: boolean;
       blackQueenside?: boolean;
     };
-  }
+  },
 ): GameState {
   const board: (Piece | null)[][] = Array.from({ length: 8 }, () =>
-    Array.from({ length: 8 }, () => null)
+    Array.from({ length: 8 }, () => null),
   );
   const pieceList: Piece[] = [];
 
@@ -237,7 +230,7 @@ describe('isInCheck', () => {
   it('should return false when there is no king', () => {
     // Edge case: no king
     const board: (Piece | null)[][] = Array.from({ length: 8 }, () =>
-      Array.from({ length: 8 }, () => null)
+      Array.from({ length: 8 }, () => null),
     );
     const state: GameState = {
       board,
@@ -260,7 +253,7 @@ describe('isInCheck', () => {
 });
 
 describe('isCheckmate', () => {
-  it('should detect Fool\'s Mate (1.f3 e5 2.g4 Qh4#)', () => {
+  it("should detect Fool's Mate (1.f3 e5 2.g4 Qh4#)", () => {
     // After 1.f3 e5 2.g4 Qh4#
     // White king on e1 (4,7), black queen on h4 (7,4)
     // The critical position: white king hemmed in, queen on h4 with support from e5 pawn
@@ -302,7 +295,7 @@ describe('isCheckmate', () => {
         { type: 'pawn', color: 'white', col: 6, row: 4, hasMoved: true }, // g4
         { type: 'pawn', color: 'white', col: 7, row: 6 },
       ],
-      'white'
+      'white',
     );
     expect(isCheckmate(state)).toBe(true);
   });
@@ -318,12 +311,12 @@ describe('isCheckmate', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'rook', color: 'black', col: 0, row: 7, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     expect(isCheckmate(state)).toBe(true);
   });
 
-  it('should detect Scholar\'s Mate position', () => {
+  it("should detect Scholar's Mate position", () => {
     // Simplified Scholar's Mate: white queen on f7 checking black king
     // Black king on e8, no escape
     const state = createTestState(
@@ -348,7 +341,7 @@ describe('isCheckmate', () => {
         { type: 'pawn', color: 'black', col: 6, row: 1 },
         { type: 'pawn', color: 'black', col: 7, row: 1 },
       ],
-      'black'
+      'black',
     );
     expect(isCheckmate(state)).toBe(true);
   });
@@ -360,7 +353,7 @@ describe('isCheckmate', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'rook', color: 'black', col: 4, row: 3, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     // King is in check from rook at e5, but can move to d1, f1, d2, f2
     expect(isCheckmate(state)).toBe(false);
@@ -374,7 +367,7 @@ describe('isCheckmate', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'rook', color: 'black', col: 4, row: 3, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     // King in check from rook at e5, but white rook can block at e5 area
     // or king can escape
@@ -391,7 +384,7 @@ describe('isCheckmate', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'rook', color: 'black', col: 4, row: 4, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     // King in check from rook, but bishop can capture the rook
     expect(isCheckmate(state)).toBe(false);
@@ -403,7 +396,7 @@ describe('isCheckmate', () => {
         { type: 'king', color: 'white', col: 4, row: 7 },
         { type: 'king', color: 'black', col: 4, row: 0 },
       ],
-      'white'
+      'white',
     );
     expect(isCheckmate(state)).toBe(false);
   });
@@ -425,7 +418,7 @@ describe('isStalemate', () => {
         { type: 'king', color: 'white', col: 0, row: 2, hasMoved: true },
         { type: 'queen', color: 'white', col: 1, row: 2, hasMoved: true },
       ],
-      'black'
+      'black',
     );
     expect(isStalemate(state)).toBe(true);
   });
@@ -437,7 +430,7 @@ describe('isStalemate', () => {
         { type: 'king', color: 'white', col: 2, row: 2, hasMoved: true },
         { type: 'queen', color: 'white', col: 0, row: 2, hasMoved: true },
       ],
-      'black'
+      'black',
     );
     // Queen gives check along the file. This is checkmate or check, not stalemate
     expect(isStalemate(state)).toBe(false);
@@ -449,7 +442,7 @@ describe('isStalemate', () => {
         { type: 'king', color: 'white', col: 4, row: 7 },
         { type: 'king', color: 'black', col: 4, row: 0 },
       ],
-      'white'
+      'white',
     );
     expect(isStalemate(state)).toBe(false);
   });
@@ -467,7 +460,7 @@ describe('getGameResult', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'rook', color: 'black', col: 0, row: 7, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     const result = getGameResult(state);
     expect(result.type).toBe('checkmate');
@@ -481,7 +474,7 @@ describe('getGameResult', () => {
         { type: 'king', color: 'white', col: 0, row: 2, hasMoved: true },
         { type: 'queen', color: 'white', col: 1, row: 2, hasMoved: true },
       ],
-      'black'
+      'black',
     );
     const result = getGameResult(state);
     expect(result.type).toBe('stalemate');
@@ -495,7 +488,7 @@ describe('getGameResult', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'pawn', color: 'white', col: 4, row: 6 },
       ],
-      'white'
+      'white',
     );
     const result = getGameResult(state);
     expect(result.type).toBe('ongoing');
@@ -508,7 +501,7 @@ describe('getGameResult', () => {
         { type: 'king', color: 'black', col: 4, row: 0, hasMoved: true },
         { type: 'rook', color: 'white', col: 0, row: 7, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     state.halfMoveClock = 100;
     const result = getGameResult(state);
@@ -521,7 +514,7 @@ describe('getGameResult', () => {
         { type: 'king', color: 'white', col: 4, row: 7, hasMoved: true },
         { type: 'king', color: 'black', col: 4, row: 0, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     const result = getGameResult(state);
     expect(result.type).toBe('draw-insufficient-material');

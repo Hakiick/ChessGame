@@ -7,7 +7,7 @@ import {
   isThreefoldRepetition,
   isInsufficientMaterial,
 } from '../rules';
-import { createInitialState, getPieceAt, makeMove } from '../board';
+import { getPieceAt, makeMove } from '../board';
 
 // Helper to create a custom test state with specific pieces
 function createTestState(
@@ -29,10 +29,10 @@ function createTestState(
     };
     halfMoveClock?: number;
     positionHistory?: string[];
-  }
+  },
 ): GameState {
   const board: (Piece | null)[][] = Array.from({ length: 8 }, () =>
-    Array.from({ length: 8 }, () => null)
+    Array.from({ length: 8 }, () => null),
   );
   const pieceList: Piece[] = [];
 
@@ -81,7 +81,7 @@ describe('canCastleKingside', () => {
           blackKingside: true,
           blackQueenside: true,
         },
-      }
+      },
     );
     expect(canCastleKingside(state, 'white')).toBe(true);
   });
@@ -101,7 +101,7 @@ describe('canCastleKingside', () => {
           blackKingside: true,
           blackQueenside: true,
         },
-      }
+      },
     );
     expect(canCastleKingside(state, 'black')).toBe(true);
   });
@@ -121,7 +121,7 @@ describe('canCastleKingside', () => {
           blackKingside: true,
           blackQueenside: true,
         },
-      }
+      },
     );
     expect(canCastleKingside(state, 'white')).toBe(false);
   });
@@ -141,7 +141,7 @@ describe('canCastleKingside', () => {
           blackKingside: true,
           blackQueenside: true,
         },
-      }
+      },
     );
     expect(canCastleKingside(state, 'white')).toBe(false);
   });
@@ -154,7 +154,7 @@ describe('canCastleKingside', () => {
         { type: 'bishop', color: 'white', col: 5, row: 7 },
         { type: 'king', color: 'black', col: 4, row: 0 },
       ],
-      'white'
+      'white',
     );
     expect(canCastleKingside(state, 'white')).toBe(false);
   });
@@ -167,7 +167,7 @@ describe('canCastleKingside', () => {
         { type: 'knight', color: 'white', col: 6, row: 7 },
         { type: 'king', color: 'black', col: 4, row: 0 },
       ],
-      'white'
+      'white',
     );
     expect(canCastleKingside(state, 'white')).toBe(false);
   });
@@ -180,7 +180,7 @@ describe('canCastleKingside', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'rook', color: 'black', col: 4, row: 3, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     expect(canCastleKingside(state, 'white')).toBe(false);
   });
@@ -193,7 +193,7 @@ describe('canCastleKingside', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'rook', color: 'black', col: 5, row: 0, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     expect(canCastleKingside(state, 'white')).toBe(false);
   });
@@ -206,7 +206,7 @@ describe('canCastleKingside', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'rook', color: 'black', col: 6, row: 0, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     expect(canCastleKingside(state, 'white')).toBe(false);
   });
@@ -218,7 +218,7 @@ describe('canCastleKingside', () => {
         { type: 'rook', color: 'white', col: 7, row: 7 },
         { type: 'king', color: 'black', col: 4, row: 0 },
       ],
-      'white'
+      'white',
     );
     expect(canCastleKingside(state, 'white')).toBe(false);
   });
@@ -230,7 +230,7 @@ describe('canCastleKingside', () => {
         { type: 'rook', color: 'white', col: 6, row: 7, hasMoved: true },
         { type: 'king', color: 'black', col: 4, row: 0 },
       ],
-      'white'
+      'white',
     );
     expect(canCastleKingside(state, 'white')).toBe(false);
   });
@@ -252,7 +252,7 @@ describe('canCastleQueenside', () => {
           blackKingside: true,
           blackQueenside: true,
         },
-      }
+      },
     );
     expect(canCastleQueenside(state, 'white')).toBe(true);
   });
@@ -272,7 +272,7 @@ describe('canCastleQueenside', () => {
           blackKingside: true,
           blackQueenside: true,
         },
-      }
+      },
     );
     expect(canCastleQueenside(state, 'black')).toBe(true);
   });
@@ -292,7 +292,7 @@ describe('canCastleQueenside', () => {
           blackKingside: true,
           blackQueenside: true,
         },
-      }
+      },
     );
     expect(canCastleQueenside(state, 'white')).toBe(false);
   });
@@ -312,7 +312,7 @@ describe('canCastleQueenside', () => {
           blackKingside: true,
           blackQueenside: true,
         },
-      }
+      },
     );
     expect(canCastleQueenside(state, 'white')).toBe(false);
   });
@@ -325,7 +325,7 @@ describe('canCastleQueenside', () => {
         { type: 'knight', color: 'white', col: 1, row: 7 },
         { type: 'king', color: 'black', col: 4, row: 0 },
       ],
-      'white'
+      'white',
     );
     expect(canCastleQueenside(state, 'white')).toBe(false);
   });
@@ -338,7 +338,7 @@ describe('canCastleQueenside', () => {
         { type: 'bishop', color: 'white', col: 2, row: 7 },
         { type: 'king', color: 'black', col: 4, row: 0 },
       ],
-      'white'
+      'white',
     );
     expect(canCastleQueenside(state, 'white')).toBe(false);
   });
@@ -351,7 +351,7 @@ describe('canCastleQueenside', () => {
         { type: 'queen', color: 'white', col: 3, row: 7 },
         { type: 'king', color: 'black', col: 4, row: 0 },
       ],
-      'white'
+      'white',
     );
     expect(canCastleQueenside(state, 'white')).toBe(false);
   });
@@ -364,7 +364,7 @@ describe('canCastleQueenside', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'rook', color: 'black', col: 4, row: 3, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     expect(canCastleQueenside(state, 'white')).toBe(false);
   });
@@ -377,7 +377,7 @@ describe('canCastleQueenside', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'rook', color: 'black', col: 3, row: 0, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     expect(canCastleQueenside(state, 'white')).toBe(false);
   });
@@ -390,7 +390,7 @@ describe('canCastleQueenside', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'rook', color: 'black', col: 2, row: 0, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     expect(canCastleQueenside(state, 'white')).toBe(false);
   });
@@ -404,7 +404,7 @@ describe('is50MoveRule', () => {
         { type: 'king', color: 'black', col: 4, row: 0, hasMoved: true },
       ],
       'white',
-      { halfMoveClock: 100 }
+      { halfMoveClock: 100 },
     );
     expect(is50MoveRule(state)).toBe(true);
   });
@@ -416,7 +416,7 @@ describe('is50MoveRule', () => {
         { type: 'king', color: 'black', col: 4, row: 0, hasMoved: true },
       ],
       'white',
-      { halfMoveClock: 150 }
+      { halfMoveClock: 150 },
     );
     expect(is50MoveRule(state)).toBe(true);
   });
@@ -428,7 +428,7 @@ describe('is50MoveRule', () => {
         { type: 'king', color: 'black', col: 4, row: 0, hasMoved: true },
       ],
       'white',
-      { halfMoveClock: 99 }
+      { halfMoveClock: 99 },
     );
     expect(is50MoveRule(state)).toBe(false);
   });
@@ -440,7 +440,7 @@ describe('is50MoveRule', () => {
         { type: 'king', color: 'black', col: 4, row: 0, hasMoved: true },
       ],
       'white',
-      { halfMoveClock: 0 }
+      { halfMoveClock: 0 },
     );
     expect(is50MoveRule(state)).toBe(false);
   });
@@ -453,7 +453,7 @@ describe('is50MoveRule', () => {
         { type: 'pawn', color: 'white', col: 4, row: 6 },
       ],
       'white',
-      { halfMoveClock: 99 }
+      { halfMoveClock: 99 },
     );
     const pawn = getPieceAt(state, { col: 4, row: 6 })!;
     const newState = makeMove(state, {
@@ -477,14 +477,8 @@ describe('isThreefoldRepetition', () => {
       ],
       'white',
       {
-        positionHistory: [
-          positionA,
-          positionB,
-          positionA,
-          positionB,
-          positionA,
-        ],
-      }
+        positionHistory: [positionA, positionB, positionA, positionB, positionA],
+      },
     );
     expect(isThreefoldRepetition(state)).toBe(true);
   });
@@ -499,13 +493,8 @@ describe('isThreefoldRepetition', () => {
       ],
       'white',
       {
-        positionHistory: [
-          positionA,
-          positionB,
-          positionA,
-          positionB,
-        ],
-      }
+        positionHistory: [positionA, positionB, positionA, positionB],
+      },
     );
     expect(isThreefoldRepetition(state)).toBe(false);
   });
@@ -520,7 +509,7 @@ describe('isThreefoldRepetition', () => {
       'white',
       {
         positionHistory: [positionA, positionA, positionA, positionA],
-      }
+      },
     );
     expect(isThreefoldRepetition(state)).toBe(false);
   });
@@ -537,14 +526,8 @@ describe('isThreefoldRepetition', () => {
       'white',
       {
         // positionA appears 3 times but is not the current (last) position
-        positionHistory: [
-          positionA,
-          positionB,
-          positionA,
-          positionA,
-          positionC,
-        ],
-      }
+        positionHistory: [positionA, positionB, positionA, positionA, positionC],
+      },
     );
     expect(isThreefoldRepetition(state)).toBe(false);
   });

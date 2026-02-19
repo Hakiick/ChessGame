@@ -4,9 +4,14 @@ import { getPieceAt } from '../board';
 import { canCastleKingside, canCastleQueenside } from '../rules';
 
 const KING_OFFSETS: ReadonlyArray<readonly [number, number]> = [
-  [-1, -1], [-1, 0], [-1, 1],
-  [0, -1],           [0, 1],
-  [1, -1],  [1, 0],  [1, 1],
+  [-1, -1],
+  [-1, 0],
+  [-1, 1],
+  [0, -1],
+  [0, 1],
+  [1, -1],
+  [1, 0],
+  [1, 1],
 ];
 
 export function getKingMoves(state: GameState, piece: Piece): Move[] {

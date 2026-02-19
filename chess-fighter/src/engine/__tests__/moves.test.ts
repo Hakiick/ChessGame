@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { GameState, Piece, PieceType, Color, Square, Move } from '../types';
 import { getLegalMoves, getAllLegalMoves } from '../moves';
-import { getPieceAt } from '../board';
 
 // Helper to create a custom test state with specific pieces
 function createTestState(
@@ -21,10 +20,10 @@ function createTestState(
       blackKingside?: boolean;
       blackQueenside?: boolean;
     };
-  }
+  },
 ): GameState {
   const board: (Piece | null)[][] = Array.from({ length: 8 }, () =>
-    Array.from({ length: 8 }, () => null)
+    Array.from({ length: 8 }, () => null),
   );
   const pieceList: Piece[] = [];
 
@@ -78,7 +77,7 @@ describe('getLegalMoves', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'pawn', color: 'black', col: 4, row: 1 },
       ],
-      'white'
+      'white',
     );
     // Trying to get moves for a black pawn on white's turn
     const moves = getLegalMoves(state, { col: 4, row: 1 });
@@ -97,7 +96,7 @@ describe('getLegalMoves', () => {
         { type: 'king', color: 'black', col: 0, row: 0 },
         { type: 'rook', color: 'black', col: 4, row: 0, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     const moves = getLegalMoves(state, { col: 4, row: 4 });
     // Rook is pinned along the e-file, can only move along col 4
@@ -117,7 +116,7 @@ describe('getLegalMoves', () => {
         { type: 'king', color: 'black', col: 0, row: 0 },
         { type: 'bishop', color: 'black', col: 0, row: 3 },
       ],
-      'white'
+      'white',
     );
     const moves = getLegalMoves(state, { col: 3, row: 6 });
     // Pawn at d2 is pinned along the diagonal a5-e1
@@ -132,7 +131,7 @@ describe('getLegalMoves', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'rook', color: 'black', col: 3, row: 0, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     const moves = getLegalMoves(state, { col: 4, row: 7 });
     // d file is attacked by black rook, king cannot go to d1 or d2
@@ -152,7 +151,7 @@ describe('getLegalMoves', () => {
         { type: 'rook', color: 'black', col: 4, row: 3, hasMoved: true },
         { type: 'rook', color: 'white', col: 0, row: 5, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     // King is in check from rook at e5 (4,3)
     // Legal moves: king escape or block with rook
@@ -162,27 +161,13 @@ describe('getLegalMoves', () => {
     // All moves must either move the king or block the check
     for (const move of allMoves) {
       expect(
-        move.piece.type === 'king' ||
-        move.to.col === 4 // blocking on the e-file
+        move.piece.type === 'king' || move.to.col === 4, // blocking on the e-file
       ).toBe(true);
     }
   });
 
   it('should allow capturing the checking piece', () => {
-    const state = createTestState(
-      [
-        { type: 'king', color: 'white', col: 4, row: 7 },
-        { type: 'knight', color: 'white', col: 3, row: 5, hasMoved: true },
-        { type: 'king', color: 'black', col: 4, row: 0 },
-        { type: 'rook', color: 'black', col: 4, row: 6, hasMoved: true },
-      ],
-      'white'
-    );
-    // King in check from rook at e2 (4,6)
-    // Knight at d3 (3,5) can capture the rook at e2... let's check:
-    // Knight at (3,5): L-moves include (4,7) no that's the king, (5,7), (5,3), (1,4), etc.
-    // Actually (3,5) -> (4,7) would be +1,+2 which is valid but that's the king square
-    // Let's use a simpler setup
+    // Using a bishop setup where the bishop can capture the checking rook
     const state2 = createTestState(
       [
         { type: 'king', color: 'white', col: 4, row: 7 },
@@ -190,7 +175,7 @@ describe('getLegalMoves', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'rook', color: 'black', col: 4, row: 6, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     // King in check from rook at e2 (4,6)
     // Bishop at c4 (2,4) can capture rook at e2 (4,6) diagonally
@@ -207,7 +192,7 @@ describe('getAllLegalMoves', () => {
         { type: 'pawn', color: 'white', col: 4, row: 6 },
         { type: 'king', color: 'black', col: 4, row: 0, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     const moves = getAllLegalMoves(state, 'white');
     // King has 3 moves (d1, f1, d2 — but must check attacks)
@@ -225,7 +210,7 @@ describe('getAllLegalMoves', () => {
         { type: 'king', color: 'black', col: 4, row: 0 },
         { type: 'rook', color: 'black', col: 0, row: 7, hasMoved: true },
       ],
-      'white'
+      'white',
     );
     const moves = getAllLegalMoves(state, 'white');
     expect(moves.length).toBe(0);
@@ -238,7 +223,7 @@ describe('getAllLegalMoves', () => {
         { type: 'king', color: 'white', col: 0, row: 2, hasMoved: true },
         { type: 'queen', color: 'white', col: 1, row: 2, hasMoved: true },
       ],
-      'black'
+      'black',
     );
     const moves = getAllLegalMoves(state, 'black');
     expect(moves.length).toBe(0);
@@ -285,7 +270,7 @@ describe('getAllLegalMoves', () => {
         { type: 'pawn', color: 'black', col: 6, row: 1 },
         { type: 'pawn', color: 'black', col: 7, row: 1 },
       ],
-      'white'
+      'white',
     );
     const moves = getAllLegalMoves(state, 'white');
     expect(moves.length).toBe(20);

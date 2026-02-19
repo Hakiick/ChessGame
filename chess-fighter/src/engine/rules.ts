@@ -17,9 +17,8 @@ export function canCastleKingside(state: GameState, color: Color): boolean {
   const opponent = color === 'white' ? 'black' : 'white';
 
   // Check castling rights
-  const hasRights = color === 'white'
-    ? state.castlingRights.whiteKingside
-    : state.castlingRights.blackKingside;
+  const hasRights =
+    color === 'white' ? state.castlingRights.whiteKingside : state.castlingRights.blackKingside;
   if (!hasRights) return false;
 
   // Verify king is at starting position
@@ -62,9 +61,8 @@ export function canCastleQueenside(state: GameState, color: Color): boolean {
   const opponent = color === 'white' ? 'black' : 'white';
 
   // Check castling rights
-  const hasRights = color === 'white'
-    ? state.castlingRights.whiteQueenside
-    : state.castlingRights.blackQueenside;
+  const hasRights =
+    color === 'white' ? state.castlingRights.whiteQueenside : state.castlingRights.blackQueenside;
   if (!hasRights) return false;
 
   // Verify king is at starting position

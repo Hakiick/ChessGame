@@ -26,10 +26,10 @@ function createTestState(
       blackKingside?: boolean;
       blackQueenside?: boolean;
     };
-  }
+  },
 ): GameState {
   const board: (Piece | null)[][] = Array.from({ length: 8 }, () =>
-    Array.from({ length: 8 }, () => null)
+    Array.from({ length: 8 }, () => null),
   );
   const pieceList: Piece[] = [];
 
@@ -177,7 +177,7 @@ describe('moveToAlgebraic', () => {
           blackKingside: false,
           blackQueenside: false,
         },
-      }
+      },
     );
     const king = getPieceAt(state, { col: 4, row: 7 })!;
     const move: Move = {
@@ -204,7 +204,7 @@ describe('moveToAlgebraic', () => {
           blackKingside: false,
           blackQueenside: false,
         },
-      }
+      },
     );
     const king = getPieceAt(state, { col: 4, row: 7 })!;
     const move: Move = {
@@ -355,7 +355,7 @@ describe('moveToAlgebraic', () => {
           blackKingside: false,
           blackQueenside: false,
         },
-      }
+      },
     );
     const king = getPieceAt(state, { col: 4, row: 7 })!;
     const move: Move = {
@@ -383,7 +383,7 @@ describe('moveToAlgebraic', () => {
           blackKingside: false,
           blackQueenside: false,
         },
-      }
+      },
     );
     const king = getPieceAt(state, { col: 4, row: 7 })!;
     const move: Move = {
@@ -420,9 +420,7 @@ describe('positionToFENFragment', () => {
   it('should generate correct FEN fragment for initial position', () => {
     const state = createInitialState();
     const fen = positionToFENFragment(state);
-    expect(fen).toBe(
-      'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -'
-    );
+    expect(fen).toBe('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -');
   });
 
   it('should include en passant square in FEN', () => {
@@ -441,7 +439,7 @@ describe('positionToFENFragment', () => {
           blackKingside: false,
           blackQueenside: false,
         },
-      }
+      },
     );
     const fen = positionToFENFragment(state);
     expect(fen).toContain('e3');
@@ -464,7 +462,7 @@ describe('positionToFENFragment', () => {
           blackKingside: false,
           blackQueenside: false,
         },
-      }
+      },
     );
     const fen = positionToFENFragment(state);
     expect(fen).toContain(' K ');
@@ -484,7 +482,7 @@ describe('positionToFENFragment', () => {
           blackKingside: false,
           blackQueenside: false,
         },
-      }
+      },
     );
     const fen = positionToFENFragment(state);
     // Should contain "- -" (no castling, no en passant)

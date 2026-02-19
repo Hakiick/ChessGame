@@ -27,10 +27,10 @@ function createTestState(
       blackKingside?: boolean;
       blackQueenside?: boolean;
     };
-  }
+  },
 ): GameState {
   const board: (Piece | null)[][] = Array.from({ length: 8 }, () =>
-    Array.from({ length: 8 }, () => null)
+    Array.from({ length: 8 }, () => null),
   );
   const pieceList: Piece[] = [];
 
@@ -185,7 +185,7 @@ describe('Pawn', () => {
           { type: 'pawn', color: 'black', col: 3, row: 3, hasMoved: true },
         ],
         'white',
-        { enPassantSquare: { col: 3, row: 2 } }
+        { enPassantSquare: { col: 3, row: 2 } },
       );
       const pawn = getPieceAt(state, { col: 4, row: 3 })!;
       const moves = getPawnMoves(state, pawn);
@@ -204,7 +204,7 @@ describe('Pawn', () => {
           { type: 'pawn', color: 'black', col: 5, row: 3, hasMoved: true },
         ],
         'white',
-        { enPassantSquare: { col: 5, row: 2 } }
+        { enPassantSquare: { col: 5, row: 2 } },
       );
       const pawn = getPieceAt(state, { col: 4, row: 3 })!;
       const moves = getPawnMoves(state, pawn);
@@ -257,7 +257,7 @@ describe('Pawn', () => {
           { type: 'king', color: 'black', col: 4, row: 0 },
           { type: 'pawn', color: 'black', col: 4, row: 3, hasMoved: true },
         ],
-        'black'
+        'black',
       );
       const pawn = getPieceAt(state, { col: 4, row: 3 })!;
       const moves = getPawnMoves(state, pawn);
@@ -271,7 +271,7 @@ describe('Pawn', () => {
           { type: 'king', color: 'black', col: 4, row: 0 },
           { type: 'pawn', color: 'black', col: 4, row: 1 },
         ],
-        'black'
+        'black',
       );
       const pawn = getPieceAt(state, { col: 4, row: 1 })!;
       const moves = getPawnMoves(state, pawn);
@@ -286,7 +286,7 @@ describe('Pawn', () => {
           { type: 'king', color: 'black', col: 4, row: 0 },
           { type: 'pawn', color: 'black', col: 0, row: 6, hasMoved: true },
         ],
-        'black'
+        'black',
       );
       const pawn = getPieceAt(state, { col: 0, row: 6 })!;
       const moves = getPawnMoves(state, pawn);
@@ -562,7 +562,7 @@ describe('King', () => {
           blackKingside: false,
           blackQueenside: false,
         },
-      }
+      },
     );
     const king = getPieceAt(state, { col: 4, row: 4 })!;
     const moves = getKingMoves(state, king);
@@ -591,7 +591,7 @@ describe('King', () => {
           blackKingside: false,
           blackQueenside: false,
         },
-      }
+      },
     );
     const king = getPieceAt(state, { col: 4, row: 4 })!;
     const moves = getKingMoves(state, king);
@@ -616,7 +616,7 @@ describe('King', () => {
           blackKingside: false,
           blackQueenside: false,
         },
-      }
+      },
     );
     const king = getPieceAt(state, { col: 4, row: 4 })!;
     const moves = getKingMoves(state, king);
@@ -638,7 +638,7 @@ describe('King', () => {
           blackKingside: false,
           blackQueenside: false,
         },
-      }
+      },
     );
     const king = getPieceAt(state, { col: 4, row: 4 })!;
     const moves = getKingMoves(state, king);
@@ -662,7 +662,7 @@ describe('King', () => {
           blackKingside: false,
           blackQueenside: false,
         },
-      }
+      },
     );
     const king = getPieceAt(state, { col: 4, row: 7 })!;
     const moves = getKingMoves(state, king);
@@ -686,7 +686,7 @@ describe('King', () => {
           blackKingside: false,
           blackQueenside: false,
         },
-      }
+      },
     );
     const king = getPieceAt(state, { col: 4, row: 7 })!;
     const moves = getKingMoves(state, king);
@@ -709,7 +709,7 @@ describe('King', () => {
           blackKingside: false,
           blackQueenside: false,
         },
-      }
+      },
     );
     const king = getPieceAt(state, { col: 0, row: 0 })!;
     const moves = getKingMoves(state, king);
@@ -787,7 +787,7 @@ describe('getPseudoLegalMoves (dispatch)', () => {
           blackKingside: false,
           blackQueenside: false,
         },
-      }
+      },
     );
     const king = getPieceAt(state, { col: 4, row: 4 })!;
     const moves = getPseudoLegalMoves(state, king);
