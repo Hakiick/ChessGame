@@ -1,0 +1,27 @@
+# Règles de commits
+
+- Commits atomiques : un commit = un changement logique
+- Messages en français ou anglais (cohérent avec le projet)
+- **YOU MUST** utiliser le format : `type(scope): description courte`
+  - `feat(scope): description` — nouvelle feature
+  - `fix(scope): description` — correction de bug
+  - `refactor(scope): description` — refactoring sans changement de comportement
+  - `test(scope): description` — ajout ou modification de tests
+  - `docs(scope): description` — documentation
+  - `chore(scope): description` — maintenance, config
+  - `perf(scope): description` — amélioration de performance
+  - `a11y(scope): description` — amélioration d'accessibilité
+- Le **scope** identifie le domaine fonctionnel concerné. Exemples :
+  - `(ui)` — Composants UI
+  - `(layout)` — Layout et navigation
+  - `(responsive)` — Responsive design
+  - `(pwa)` — Progressive Web App
+  - `(perf)` — Performance
+  - `(a11y)` — Accessibilité
+  - `(ci)` — CI/CD
+- Exemples concrets :
+  - `feat(layout): add responsive hamburger menu`
+  - `fix(responsive): correct grid layout on tablet`
+  - `perf(ui): lazy-load images below the fold`
+  - `a11y(nav): add ARIA labels to navigation links`
+- Ne jamais committer de fichiers .env, secrets, ou credentials
