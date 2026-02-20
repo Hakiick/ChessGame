@@ -33,11 +33,12 @@ resource "azurerm_linux_web_app" "chessgame" {
   https_only          = true
 
   site_config {
-    always_on           = var.sku_name != "F1"
-    http2_enabled       = true
-    minimum_tls_version = "1.2"
-    ftps_state          = "Disabled"
-    health_check_path   = "/"
+    always_on                         = var.sku_name != "F1"
+    http2_enabled                     = true
+    minimum_tls_version               = "1.2"
+    ftps_state                        = "Disabled"
+    health_check_path                 = "/"
+    health_check_eviction_time_in_min = 10
 
     application_stack {
       node_version = var.node_version
