@@ -1,0 +1,17 @@
+node_modules
+.next
+.git
+.gitignore
+*.md
+.env*
+Dockerfile
+.dockerignore
+tests
+.github
+terraform
+coverage
+demo
+e2e
+playwright-report
+test-results
+screenshots
