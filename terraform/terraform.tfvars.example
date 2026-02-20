@@ -1,0 +1,9 @@
+# Copier vers terraform.tfvars et compléter
+# Ne JAMAIS committer terraform.tfvars
+
+subscription_id = "YOUR-SUBSCRIPTION-ID-HERE"
+env             = "dev"
+location        = "westeurope"
+project_name    = "chessgame"
+sku_name        = "B1"
+node_version    = "20-lts"
