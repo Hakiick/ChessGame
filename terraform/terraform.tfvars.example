@@ -3,7 +3,8 @@
 
 subscription_id = "YOUR-SUBSCRIPTION-ID-HERE"
 env             = "dev"
-location        = "westeurope"
+# Allowed regions: uksouth, swedencentral, polandcentral, switzerlandnorth, germanywestcentral
+location        = "swedencentral"
 project_name    = "chessgame"
 sku_name        = "B1"
 node_version    = "20-lts"

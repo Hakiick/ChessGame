@@ -11,7 +11,12 @@ variable "env" {
 variable "location" {
   description = "Azure region where resources will be deployed"
   type        = string
-  default     = "westeurope"
+  default     = "swedencentral"
+
+  validation {
+    condition     = contains(["uksouth", "swedencentral", "polandcentral", "switzerlandnorth", "germanywestcentral"], var.location)
+    error_message = "Location must be one of the allowed regions: uksouth, swedencentral, polandcentral, switzerlandnorth, germanywestcentral."
+  }
 }
 
 variable "project_name" {
